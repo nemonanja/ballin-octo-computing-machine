@@ -100,9 +100,82 @@ var updateIP = function(callback) {
 	);
 };
 
+
+// Get DNS info function for noip.me dyndns service
+// returns ip assigned to asmgods.noip.me, when ip was last updated and your own ip
+var getDNSinfo = function(callback) {
+	// Get token
+	console.log('Updating domain with id:', config.dns.domainID, 'for user:', username);
+	request.get(
+		loginUrl,
+		function (error, response, body) {
+			if (!error && response.statusCode == 200) {
+				var i = body.indexOf('name="_token" value="')+21;
+				body = body.substring(i);
+				i = body.indexOf('"');
+				var token = body.substring(0, i);
+				console.log("token:",token);
+
+				// Login
+				request.post(
+					loginUrl,
+					{ form:
+						{
+							'username': username,
+							'password': password,
+							'submit_login_page': '1',
+							'_token': token
+						}
+					},
+					function (error, response, body) {
+						if (!error && response.statusCode == 302) {
+							console.log('login success');
+
+							// Get form inputs
+							request.get(
+								updateUrl,
+								function (error, response, body) {
+									if (!error && response.statusCode == 200) {
+										var formData = {};
+										$ = cheerio.load(body);
+
+										// Get input elemnts for form
+										var lastUpdate = $('#set_a dd').first().find('span').text();
+										var i = lastUpdate.indexOf('Last Update: ')+13;
+										var j = lastUpdate.indexOf(' PDT');
+										lastUpdate = lastUpdate.substring(i,j)
+										var dnsIP = $('#ip').attr('value');
+										var ownIP = $('#port_ip').attr('value');
+										var result = {dnsIP: dnsIP, ownIP: ownIP, lastUpdate: lastUpdate};
+										console.log(result);
+										callback(result);
+
+									} else {
+										console.log('get update page error:', error);
+										callback(false);
+									}
+								}
+							);
+						} else {
+							console.log('login error:', error);
+							callback(false);
+						}
+					}
+				);
+			} else {
+				console.log('get login page error:', error);
+				callback(false);
+			}
+		}
+	);
+};
+
+
+
+
 var printAll = function() {
 	console.log("dns.js", Globals.ip_arr);
 };
 
 exports.updateIP = updateIP;
-exports.printAll = printAll;
+exports.getDNSinfo = getDNSinfo;

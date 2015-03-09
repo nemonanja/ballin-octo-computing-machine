@@ -12,6 +12,6 @@ var Dns = require('./modules/dns.js');
 
 
 // test code
-Dns.updateIP(function(newIp){
-	console.log(newIp);
+Dns.getDNSinfo(function(info){
+	console.log('Info:',info);
 });
