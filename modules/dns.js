@@ -1,21 +1,24 @@
 // DNS module
 
 var Globals = require('../globals.js');
-
-var request = require('request');
-var request = request.defaults({jar: true});
+var config = require('../config.json');
 
 var cheerio = require('cheerio');
+var request = require('request').defaults({jar: true});
 
+var username = config.dns.username;
+var password = config.dns.password;
 var loginUrl = 'https://www.noip.com/login';
-var updateUrl = 'https://www.noip.com/members/dns/host.php?host_id=44898217';
+var updateUrl = 'https://www.noip.com/members/dns/host.php?host_id='+config.dns.domainID;
 
 // =========
 //  Exports 
 // =========
 
+// IP update function for noip.me dyndns service
 var updateIP = function(callback) {
 	// Get token
+	console.log(username, password);
 	request.get(
 		loginUrl,
 		function (error, response, body) {
@@ -31,8 +34,8 @@ var updateIP = function(callback) {
 					loginUrl,
 					{ form:
 						{
-							'username': 'asmgods',
-							'password': '49tbUfbmorkR',
+							'username': username,
+							'password': password,
 							'submit_login_page': '1',
 							'_token': token
 						}
