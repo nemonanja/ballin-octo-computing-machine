@@ -18,7 +18,7 @@ var updateUrl = 'https://www.noip.com/members/dns/host.php?host_id='+config.dns.
 // IP update function for noip.me dyndns service
 var updateIP = function(callback) {
 	// Get token
-	console.log(username, password);
+	console.log('Updating domain with id:', config.dns.domainID, 'for user:', username);
 	request.get(
 		loginUrl,
 		function (error, response, body) {
