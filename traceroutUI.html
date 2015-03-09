@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
-    <title>Simple Polylines</title>
+    <title></title>
     <style>
         html, body, #map-canvas {
             height: 100%;
@@ -11,11 +11,19 @@
             padding: 0px
         }
     </style>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=false"></script>
     <script>
 
 
+
         function initialize() {
+
+            $.getJSON('http://asmgod.noip.me/', function(data) {
+                //data is the JSON string
+                console.log(data);
+            });
+
             var mapOptions = {
                 zoom: 3,
                 center: new google.maps.LatLng(0, -180),
@@ -36,12 +44,21 @@
             var Path = new google.maps.Polyline({
                 path: traceroutPATH,
                 geodesic: true,
-                strokeColor: '#FF0000',
+                strokeColor: '#FF0001',
                 strokeOpacity: 1.0,
                 strokeWeight: 2
             });
 
+            var myLatlng = new google.maps.LatLng(-25.363882,131.044922);
+            var marker = new google.maps.Marker({
+                position: myLatlng,
+                map: map,
+                title: 'Node'
+            });
+
+
             Path.setMap(map);
+            marker.setMap(map);
         }
 
         google.maps.event.addDomListener(window, 'load', initialize);
