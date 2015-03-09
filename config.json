@@ -1,0 +1,7 @@
+{
+	"dns": {
+		"username": "noip username here",
+		"password": "noip password here",
+		"domainID": "domain id here"
+	}
+}

@@ -23,7 +23,7 @@ coverage
 build/Release
 
 # Configure file
-config.json
+#config.json
 
 # Dependency directory
 node_modules
