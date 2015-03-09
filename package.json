@@ -4,10 +4,12 @@
 	"version": "0.0.1",
 	"main": "server.js",
 	"dependencies": {
-		"cheerio": "0.18.0",
-		"request": "2.53.0"
+		"express"	: "4.12.x",
+		"cheerio"	: "0.18.0",
+		"request"	: "2.53.0",
+		"crypto"	: "0.0.3"
 	},
 	"licenses": {
-		"type": "none"
+		"type": "MIT"
 	}
 }

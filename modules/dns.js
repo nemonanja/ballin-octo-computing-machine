@@ -1,6 +1,6 @@
 // DNS module
 
-var Globals = require('../globals.js');
+var globals = require('../globals.js');
 var config = require('../config.json');
 
 var cheerio = require('cheerio');
@@ -11,9 +11,9 @@ var password = config.dns.password;
 var loginUrl = 'https://www.noip.com/login';
 var updateUrl = 'https://www.noip.com/members/dns/host.php?host_id='+config.dns.domainID;
 
-// =========
-//  Exports 
-// =========
+// ==================
+//  Public functions 
+// ==================
 
 // IP update function for noip.me dyndns service
 var updateIP = function(callback) {
@@ -168,13 +168,6 @@ var getDNSinfo = function(callback) {
 			}
 		}
 	);
-};
-
-
-
-
-var printAll = function() {
-	console.log("dns.js", Globals.ip_arr);
 };
 
 exports.updateIP = updateIP;
