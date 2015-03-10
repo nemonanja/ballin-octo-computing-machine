@@ -32,8 +32,9 @@ app.use(express.static(view));
 // Register new node
 app.get('/register', function(req, res) {
 	console.log('register called');
-	if(globals.is_master && req.data){
-		crypt.decryptJSON(req.data, function(data) {
+	console.log(req.body);
+	if(globals.is_master && req.body.data){
+		crypt.decryptJSON(req.body.data, function(data) {
 			var clientIp = req.ip;
 			console.log(data);
 			globals.ip_arr.push(clientIp);

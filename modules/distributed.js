@@ -67,7 +67,7 @@ var callMaster = function(callback) {
 	crypt.encryptJSON({uuid: globals.uuid}, function(data) {
 		request.get(
 			registerUrl,
-			{form: {'data': data}},
+			{qs: {'data': data}},
 			function (error, response, body) {
 				console.log('body:', body);
 				if (!error && response.statusCode == 200) {
