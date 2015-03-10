@@ -68,10 +68,10 @@ var callMaster = function(callback) {
 		registerUrl,
 		function (error, response, body) {
 			if (!error && response.statusCode == 200) {
-				var data = body;
+				var data = JSON.parse(body);
 				console.log('json:', data);
 				// check that we had valid response
-				if(data!=null && data.ip_arr!=null && data.ip!=null) {
+				if(data!=null && data.ip_arr!=null && data.ip_arr.length>0 && data.ip!=null) {
 					globals.my_ip = data.ip;
 					globals.ip_arr = data.ip_arr;
 					callback(true);
