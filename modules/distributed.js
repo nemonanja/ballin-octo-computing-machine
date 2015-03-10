@@ -141,6 +141,5 @@ var ipListHandler = function(uuid, ip, callback) {
 
 exports.initialize = initialize;
 exports.initLoop = initLoop;
-exports.uuidVerify = uuidVerify;
 exports.uuid = uuid;
 exports.ipListHandler = ipListHandler;
