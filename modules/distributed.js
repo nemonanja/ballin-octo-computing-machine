@@ -63,34 +63,6 @@ var initialize = function(callback) {
 	});
 };
 
-var callMaster = function(callback) {
-	crypt.encryptJSON({uuid: globals.uuid}, function(data) {
-		request.get(
-			registerUrl,
-			{qs: {'data': data}},
-			function (error, response, body) {
-				console.log('body:', body);
-				if (!error && response.statusCode == 200) {
-					crypt.decryptJSON(body, function(data) {
-						console.log('json:', data);
-						// check that we had valid response
-						if(data!=null && data.ip_arr!=null && data.ip_arr.length>0 && data.ip!=null) {
-							globals.my_ip = data.ip;
-							globals.ip_arr = data.ip_arr;
-							callback(true);
-						} else {
-							callback(false);
-						}
-					});
-				} else {
-					console.log('error:', error);
-					callback(false);
-				}
-			}
-		);
-	});
-};
-
 var initLoop = function() {
 	console.log('entering init loop');
 	setTimeout(function () {
@@ -108,6 +80,34 @@ var initLoop = function() {
 	}, 60000) // 1 minute
 };
 
+var callMaster = function(callback) {
+	crypt.encryptJSON({uuid: globals.uuid}, function(data) {
+		request.get(
+			registerUrl,
+			{qs: {'data': data}},
+			function (error, response, body) {
+				console.log('body:', body);
+				if (!error && response.statusCode == 200) {
+					crypt.decryptJSON(body, function(data) {
+						console.log('json:', data);
+						// check that we had valid response
+						if(data!=null && data.ip_list!=null && data.ip_list.length>0 && data.ip!=null) {
+							globals.my_ip = data.ip;
+							globals.ip_list = data.ip_list;
+							callback(true);
+						} else {
+							callback(false);
+						}
+					});
+				} else {
+					console.log('error:', error);
+					callback(false);
+				}
+			}
+		);
+	});
+};
+
 var startHearbeat = function() {
 	console.log("wub wub");
 };
@@ -122,17 +122,14 @@ var uuid = function() {
 };
 
 var ipListHandler = function(uuid, ip, callback) {
-	if(uuid===uuid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)) {
+	if(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
 		for (var key in globals.ip_list) {
-			if(key===uuid) {
-				globals.ip_list[data.uuid] = clientIp;
-				break;
-			} else if(globals.ip_list[key]===ip) {
+			if(key===uuid || globals.ip_list[key]===ip) {
 				delete globals.ip_list[key];
-				globals.ip_list[data.uuid] = clientIp;
 				break;
 			}
 		}
+		globals.ip_list[uuid] = ip;
 		callback(true);
 	} else {
 		callback(false);

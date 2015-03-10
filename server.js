@@ -36,9 +36,9 @@ app.get('/register', function(req, res) {
 		crypt.decryptJSON(req.query.data, function(data) {
 			var clientIp = req.ip;
 			var uuid = data.uuid;
-
 			// Gice ip and uuid to list handler
-			distributed.ipListHandler(clientIp, uuid, function(success) {
+			distributed.ipListHandler(uuid, clientIp, function(success) {
+				console.log("handler returned:", success);
 				if(success){
 					console.log('return ip_list:', globals.ip_list);
 					crypt.sendCryptJSON({ip_list: globals.ip_list, ip: clientIp}, res);
