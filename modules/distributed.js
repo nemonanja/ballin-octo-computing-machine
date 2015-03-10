@@ -80,7 +80,7 @@ var callMaster = function(callback) {
 					callback(false);
 				}
 			} else {
-				console.log('error:', error, response.statusCode);
+				console.log('error:', error);
 				callback(false);
 			}
 		}
