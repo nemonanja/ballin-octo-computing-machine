@@ -36,8 +36,8 @@ app.get('/register', function(req, res) {
 		crypt.decryptJSON(req.query.data, function(data) {
 			var clientIp = req.ip;
 			var uuid = data.uuid;
-			// Gice ip and uuid to list handler
-			distributed.ipListHandler(uuid, clientIp, function(success) {
+			// Give ip and uuid to list handler
+			distributed.addSlave(uuid, clientIp, function(success) {
 				console.log("handler returned:", success);
 				if(success){
 					console.log('return ip_list:', globals.ip_list);
@@ -54,25 +54,24 @@ app.get('/register', function(req, res) {
 	}
 });
 
-// Take over notify
-app.get('/takeover', function(req, res) {
-	console.log('takeover called');
-	if(globals.is_master){
-		globals.is_master = false;
-		console.log('node switched to slave');
-		//crypt.sendCryptJSON(true, res);
-		res.json(true);
+// IP list changed
+app.post('/ipnotify', function(req, res) {
+	console.log('ipnotify called');
+	if(!globals.is_master && req.query && req.query.data){
+		crypt.decryptJSON(req.query.data, function(data) {
+			if(data.ip_list) {
+				console.log('new ip list:', data);
+				globals.ip_list = data.ip_list;
+				crypt.sendCryptJSON(true, res);
+			} else {
+				console.log('no new ip list in:', data);
+				crypt.sendCryptJSON(false, res);
+			}
+		});
 	} else {
 		console.log('return false');
-		//crypt.sendCryptJSON(false, res);
-		res.json(false);
+		crypt.sendCryptJSON(false, res);
 	}
-});
-
-// IP list changed notify
-app.get('/ipnotify', function(req, res) {
-	console.log('ipnotify called');
-	res.json(true);
 });
 
 // start listening

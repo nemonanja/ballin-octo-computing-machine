@@ -21,7 +21,7 @@ var initialize = function(callback) {
 	callMaster(function(response) {
 		// Master found, return response
 		if(response){
-			console.log('Master found');
+			console.log('Master node found');
 			startHearbeat();
 			callback('slave');
 		// No master found
@@ -64,7 +64,7 @@ var initialize = function(callback) {
 };
 
 var initLoop = function() {
-	console.log('entering init loop');
+	console.log('Starting init loop');
 	setTimeout(function () {
 		initialize(function(status) {
 			//Node initialised successfully
@@ -86,10 +86,8 @@ var callMaster = function(callback) {
 			registerUrl,
 			{qs: {'data': data}},
 			function (error, response, body) {
-				console.log('body:', body);
 				if (!error && response.statusCode == 200) {
 					crypt.decryptJSON(body, function(data) {
-						console.log('json:', data);
 						// check that we had valid response
 						if(data!=null && data!=false &&'ip_list' in data) {
 							globals.my_ip = data.ip;
@@ -108,10 +106,12 @@ var callMaster = function(callback) {
 	});
 };
 
+// Start heartbeat
 var startHearbeat = function() {
 	console.log("wub wub");
 };
 
+// Generate uuid
 var uuid = function() {
 	var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -121,22 +121,52 @@ var uuid = function() {
 	console.log("Added uuid:", uuid);
 };
 
-var ipListHandler = function(uuid, ip, callback) {
+// Procedure to add new slave node
+var addSlave = function(uuid, ip, callback) {
+	// check if uuid is valid
 	if(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
+		//check if already in list
 		for (var key in globals.ip_list) {
 			if(key===uuid || globals.ip_list[key]===ip) {
 				delete globals.ip_list[key];
 				break;
 			}
 		}
+		// add to list
 		globals.ip_list[uuid] = ip;
+
+		// Notify all slaves
+		notify(globals.ip_list, uuid);
+
 		callback(true);
+	// no valid uuid, node not added to list
 	} else {
 		callback(false);
 	}
 };
 
+// Notify all old slave nodes about new node
+var notify = function(ipList, uuid) {
+	console.log('notify: ', ipList)
+	for (var key in ipList) {
+		if(key!=uuid) {
+			crypt.encryptJSON({ip_list: ipList}, function(data) {
+				console.log('Sending new ip list to:', ipList[key]);
+				request.post(
+					'http://'+ipList[key]+':'+config.port+'/ipnotify',
+					{qs:{data: data}},
+					function (error, response, body) {
+						if(error) {
+							console.log(error);
+						}
+					});
+			});
+		}
+	}
+};
+
+
 exports.initialize = initialize;
 exports.initLoop = initLoop;
 exports.uuid = uuid;
-exports.ipListHandler = ipListHandler;
+exports.addSlave = addSlave;

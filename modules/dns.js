@@ -27,7 +27,6 @@ var updateIP = function(callback) {
 				body = body.substring(i);
 				i = body.indexOf('"');
 				var token = body.substring(0, i);
-				console.log("token:",token);
 
 				// Login
 				request.post(
@@ -42,8 +41,6 @@ var updateIP = function(callback) {
 					},
 					function (error, response, body) {
 						if (!error && response.statusCode == 302) {
-							console.log('login success');
-
 							// Get form inputs
 							request.get(
 								updateUrl,
@@ -65,13 +62,12 @@ var updateIP = function(callback) {
 
 										// Change new ip to own ip
 										formData['host[ip]'] = formData['host[port][ip]'];
-
 										request.post(
 											updateUrl,
 											{form: formData},
 											function (error, response, body) {
 												if (!error && response.statusCode == 302) {
-													console.log('update success new ip:', formData['host[ip]']);
+													console.log('DNS updated, new ip:', formData['host[ip]']);
 													// set master ip to globals
 													globals.master_ip=formData['host[ip]'];
 													globals.is_master=true;
@@ -118,7 +114,6 @@ var getDNSinfo = function(callback) {
 				body = body.substring(i);
 				i = body.indexOf('"');
 				var token = body.substring(0, i);
-				console.log("token:",token);
 
 				// Login
 				request.post(
@@ -133,8 +128,6 @@ var getDNSinfo = function(callback) {
 					},
 					function (error, response, body) {
 						if (!error && response.statusCode == 302) {
-							console.log('login success');
-
 							// Get form inputs
 							request.get(
 								updateUrl,
@@ -151,7 +144,7 @@ var getDNSinfo = function(callback) {
 										var dnsIP = $('#ip').attr('value');
 										var ownIP = $('#port_ip').attr('value');
 										var result = {dnsIP: dnsIP, ownIP: ownIP, lastUpdate: lastUpdate};
-										console.log(result);
+										console.log('DNS information:', result);
 
 										// set own external ip
 										globals.my_ip = ownIP;
