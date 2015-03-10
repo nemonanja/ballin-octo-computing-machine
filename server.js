@@ -26,7 +26,7 @@ app.use(express.static(view));
 // ROUTES
 // ======
 
-// Register
+// Register new node
 app.get('/register', function(req, res) {
 	console.log('register');
 	if(globals.is_master){
@@ -60,12 +60,7 @@ app.get('/takeover', function(req, res) {
 // IP list changed notify
 app.get('/ipnotify', function(req, res) {
 	console.log('ipnotify');
-	if(!globals.is_master){
-		globals.is_master = false;
-		console.log('node switched to slave');
-		//crypt.sendCryptJSON(false, res);
-		res.json(false);
-	}
+	res.json(true);
 });
 
 // start listening
