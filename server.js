@@ -33,10 +33,12 @@ app.get('/register', function(req, res) {
 		var clientIp = req.ip;
 		globals.ip_arr.push(clientIp);
 		console.log('return ip_arr:', globals.ip_arr);
-		crypt.sendCryptJSON({ip_arr: globals.ip_arr, ip: clientIp}, res);
+		//crypt.sendCryptJSON({ip_arr: globals.ip_arr, ip: clientIp}, res);
+		res.json({ip_arr: globals.ip_arr, ip: clientIp});
 	} else {
 		console.log('return false');
-		crypt.sendCryptJSON(false, res);
+		//crypt.sendCryptJSON(false, res);
+		res.json(false);
 	}
 });
 
@@ -46,10 +48,12 @@ app.get('/takeover', function(req, res) {
 	if(globals.is_master){
 		globals.is_master = false;
 		console.log('node switched to slave');
-		crypt.sendCryptJSON(true, res);
+		//crypt.sendCryptJSON(true, res);
+		res.json(true);
 	} else {
 		console.log('return false');
-		crypt.sendCryptJSON(false, res);
+		//crypt.sendCryptJSON(false, res);
+		res.json(false);
 	}
 });
 
@@ -59,7 +63,8 @@ app.get('/ipnotify', function(req, res) {
 	if(!globals.is_master){
 		globals.is_master = false;
 		console.log('node switched to slave');
-		crypt.sendCryptJSON(false, res);
+		//crypt.sendCryptJSON(false, res);
+		res.json(false);
 	}
 });
 

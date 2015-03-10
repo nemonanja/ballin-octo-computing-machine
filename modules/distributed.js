@@ -68,17 +68,16 @@ var callMaster = function(callback) {
 		registerUrl,
 		function (error, response, body) {
 			if (!error && response.statusCode == 200) {
-				crypt.decryptJSON(body, function(data) {
-					console.log('json:', data);
-					// check that we had valid response
-					if(data!=null && data.ip_arr!=null && data.ip_arr.length>0 && data.ip!=null) {
-						globals.my_ip = data.ip;
-						globals.ip_arr = data.ip_arr;
-						callback(true);
-					} else {
-						callback(false);
-					}
-				});
+				var data = body;
+				console.log('json:', data);
+				// check that we had valid response
+				if(data!=null && data.ip_arr!=null && data.ip_arr.length>0 && data.ip!=null) {
+					globals.my_ip = data.ip;
+					globals.ip_arr = data.ip_arr;
+					callback(true);
+				} else {
+					callback(false);
+				}
 			} else {
 				console.log('error:', error);
 				callback(false);
