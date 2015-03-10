@@ -30,7 +30,7 @@ var initialize = function(callback) {
 			// Get DNS and ip info
 			dns.getDNSinfo(function(data) {
 				// Time passed from last update
-				var elapsed = moment().valueOf() - moment(data.lastUpdate).zone('').valueOf()-25200000;
+				var elapsed = moment().valueOf() - moment(data.lastUpdate).valueOf()-25200000;
 				console.log(elapsed);
 				// DNS updated more than 2 minutes ago but no response,
 				if(elapsed==null || elapsed>120000) {
@@ -87,8 +87,26 @@ var callMaster = function(callback) {
 	);
 };
 
+var initLoop = function() {
+	console.log('entering init loop');
+	setTimeout(function () {
+		distributed.initialize(function(status) {
+			//Node initialised successfully
+			if(status) {
+				console.log('Node initialized as', status);
+				console.log(globals);
+			// Could not initialize node, wait 1 minute and try again
+			} else {
+				console.log('Node not initialized, waiting 1 minute and trying again');
+				initLoop();
+			}
+		});
+	}, 60000) // 1 minute
+};
+
 var startHearbeat = function() {
 	console.log("wub wub");
 };
 
 exports.initialize = initialize;
+exports.initLoop = initLoop;
