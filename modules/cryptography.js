@@ -2,10 +2,11 @@
 
 var config = require('../config.json');
 
-var crypto = require('crypto');
+var simplecrypt = require("simplecrypt");
+var sc = simplecrypt();
+var digest = sc.encrypt("asd");
 
-var cipher = crypto.createCipher(config.crypt.algorithm, config.crypt.password);
-var decipher = crypto.createDecipher(config.crypt.algorithm, config.crypt.password);
+//var cipher = crypto.createCipher(config.crypt.algorithm, config.crypt.password);
 
 
 // ===================
@@ -13,22 +14,18 @@ var decipher = crypto.createDecipher(config.crypt.algorithm, config.crypt.passwo
 // ===================
  
 var decryptJSON  = function(json, callback){
-	console.log(json);
-	var dec = decipher.update(json,'hex','utf8')
-	dec += decipher.final('utf8');
-	var object = JSON.parse(dec);
-	console.log(object);
-
-	callback(dec);
+	console.log('c:',json);
+	var message = sc.decrypt(json);
+	console.log('d:',message);
+	callback(message);
 };
 
 var sendCryptJSON  = function(json, res){
 	json = JSON.stringify(json);
-	console.log(json);
-	var crypted = cipher.update(json,'utf8','hex')
-	crypted += cipher.final('hex');
-	console.log(crypted);
-	res.send(crypted);
+	console.log('a:',json);
+	var digest = sc.encrypt(json);
+	console.log('b:',digest);
+	res.send(digest);
 };
 
 exports.decryptJSON = decryptJSON;
