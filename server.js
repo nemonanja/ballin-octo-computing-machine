@@ -33,10 +33,10 @@ app.get('/register', function(req, res) {
 		var clientIp = req.headers['X-Forwarded-For'];
 		globals.ip_arr.push(clientIp);
 		console.log('return ip_arr:', global.ip_arr);
-		res.send(crypt.encryptJSON({ip_arr: ip_arr, ip: clientIp}));
+		crypt.sendCryptJSON({ip_arr: ip_arr, ip: clientIp}, res);
 	} else {
 		console.log('return false');
-		res.send(crypt.encryptJSON(false));
+		crypt.sendCryptJSON(false, res);
 	}
 });
 
@@ -46,10 +46,10 @@ app.get('/takeover', function(req, res) {
 	if(globals.is_master){
 		globals.is_master = false;
 		console.log('node switched to slave');
-		res.send(crypt.encryptJSON(true));
+		crypt.sendCryptJSON(true, res);
 	} else {
 		console.log('return false');
-		res.send(crypt.encryptJSON(false));
+		crypt.sendCryptJSON(false, res);
 	}
 });
 
@@ -59,7 +59,7 @@ app.get('/ipnotify', function(req, res) {
 	if(!globals.is_master){
 		globals.is_master = false;
 		console.log('node switched to slave');
-		res.send(crypt.encryptJSON(true));
+		crypt.sendCryptJSON(false, res);
 	}
 });
 
