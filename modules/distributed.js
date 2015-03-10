@@ -91,7 +91,7 @@ var callMaster = function(callback) {
 					crypt.decryptJSON(body, function(data) {
 						console.log('json:', data);
 						// check that we had valid response
-						if(data!=null) {
+						if(data!=null && !data) {
 							globals.my_ip = data.ip;
 							globals.ip_list = data.ip_list;
 							callback(true);
