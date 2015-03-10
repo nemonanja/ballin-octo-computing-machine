@@ -18,6 +18,9 @@ var app = express();
 var pub = __dirname + '/public',
 	view = __dirname + '/views';
 
+// Genrate uuid
+distributed.uuid();
+
 
 app.use(express.static(pub));
 app.use(express.static(view));
@@ -28,23 +31,26 @@ app.use(express.static(view));
 
 // Register new node
 app.get('/register', function(req, res) {
-	console.log('register');
-	if(globals.is_master){
-		var clientIp = req.ip;
-		globals.ip_arr.push(clientIp);
-		console.log('return ip_arr:', globals.ip_arr);
-		//crypt.sendCryptJSON({ip_arr: globals.ip_arr, ip: clientIp}, res);
-		res.json({ip_arr: globals.ip_arr, ip: clientIp});
+	console.log('register called');
+	if(globals.is_master && req.data){
+		crypt.decryptJSON(req.data, function(data) {
+			var clientIp = req.ip;
+			console.log(data);
+			globals.ip_arr.push(clientIp);
+			console.log('return ip_arr:', globals.ip_arr);
+			crypt.sendCryptJSON({ip_arr: globals.ip_arr, ip: clientIp}, res);
+			//res.json({ip_arr: globals.ip_arr, ip: clientIp});
+		});
 	} else {
 		console.log('return false');
-		//crypt.sendCryptJSON(false, res);
-		res.json(false);
+		crypt.sendCryptJSON(false, res);
+		//res.json(false);
 	}
 });
 
 // Take over notify
 app.get('/takeover', function(req, res) {
-	console.log('takeover');
+	console.log('takeover called');
 	if(globals.is_master){
 		globals.is_master = false;
 		console.log('node switched to slave');
@@ -59,7 +65,7 @@ app.get('/takeover', function(req, res) {
 
 // IP list changed notify
 app.get('/ipnotify', function(req, res) {
-	console.log('ipnotify');
+	console.log('ipnotify called');
 	res.json(true);
 });
 

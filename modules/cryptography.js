@@ -4,10 +4,6 @@ var config = require('../config.json');
 
 var crypto = require('crypto');
 
-var cipher = crypto.createCipher(config.crypt.algorithm, config.crypt.password);
-var decipher = crypto.createDecipher(config.crypt.algorithm, config.crypt.password);
-
-
 // ===================
 //  Public functions 
 // ===================
