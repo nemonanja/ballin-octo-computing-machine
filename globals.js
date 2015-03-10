@@ -1,8 +1,8 @@
 Globals = {
-  ip_arr: [],
-  is_master: false,
-  master_ip: '',
-  my_ip: ''
+	uuid		: "",
+  	ip_arr		: [],
+  	is_master	: false,
+  	my_ip		: ''
 };
 
 module.exports = Globals;

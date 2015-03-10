@@ -8,7 +8,6 @@ var config = require('./config.json');
 var distributed = require('./modules/distributed.js');
 var crypt = require('./modules/cryptography.js');
 //var worker = require('./modules/worker.js');
-//var heartbeat = require('./modules/heartbeat.js');
 
 // External modules
 var express  = require('express');
@@ -30,18 +29,53 @@ app.use(express.static(view));
 // Register
 app.get('/register', function(req, res) {
 	console.log('register');
-
 	if(globals.is_master){
-		globals.ip_arr.push(req.headers['X-Forwarded-For'])
-		console.log(Global.ip_arr);
-
-		console.log('return ip_arr');
-		res.json({ip_arr: ip_arr});
+		var clientIp = req.headers['X-Forwarded-For'];
+		globals.ip_arr.push(clientIp);
+		console.log('return ip_arr:', global.ip_arr);
+		res.send(crypt.encryptJSON({ip_arr: ip_arr, ip: clientIp}));
 	} else {
 		console.log('return false');
-		res.json(false);
+		res.send(crypt.encryptJSON(false));
 	}
 });
 
+// Take over notify
+app.get('/takeover', function(req, res) {
+	console.log('takeover');
+	if(globals.is_master){
+		globals.is_master = false;
+		console.log('node switched to slave');
+		res.send(crypt.encryptJSON(true));
+	} else {
+		console.log('return false');
+		res.send(crypt.encryptJSON(false));
+	}
+});
+
+// IP list changed notify
+app.get('/ipnotify', function(req, res) {
+	console.log('ipnotify');
+	if(!globals.is_master){
+		globals.is_master = false;
+		console.log('node switched to slave');
+		res.send(crypt.encryptJSON(true));
+	}
+});
+
+// start listening
 app.listen(config.port);
 console.log('Node running on port:', config.port);
+
+
+// initialize node for distributed system
+distributed.initialize(function(status) {
+	//Node initialised successfully
+	if(status) {
+		console.log('Node initialized as', status);
+		console.log(globals);
+	// Could not initialize node, wait 1 minute and try again
+	} else {
+		distributed.initLoop()
+	}
+});

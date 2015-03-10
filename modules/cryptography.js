@@ -31,7 +31,7 @@ var encryptJSON = function(json){
 }
  
 var decryptJSON  = function(json){
-  var dec = decipher.update(text,'hex','utf8')
+  var dec = decipher.update(json,'hex','utf8')
   dec += decipher.final('utf8');
   return JSON.parse(dec);
 }

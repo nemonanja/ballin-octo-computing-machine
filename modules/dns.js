@@ -72,6 +72,9 @@ var updateIP = function(callback) {
 											function (error, response, body) {
 												if (!error && response.statusCode == 302) {
 													console.log('update success new ip:', formData['host[ip]']);
+													// set master ip to globals
+													globals.master_ip=formData['host[ip]'];
+													//return master ip
 													callback(formData['host[ip]']);
 												} else {
 													console.log('update error:', error);
@@ -105,7 +108,7 @@ var updateIP = function(callback) {
 // returns ip assigned to asmgods.noip.me, when ip was last updated and your own ip
 var getDNSinfo = function(callback) {
 	// Get token
-	console.log('Updating domain with id:', config.dns.domainID, 'for user:', username);
+	console.log('Getting info for domain with id:', config.dns.domainID, 'for user:', username);
 	request.get(
 		loginUrl,
 		function (error, response, body) {
@@ -136,10 +139,10 @@ var getDNSinfo = function(callback) {
 								updateUrl,
 								function (error, response, body) {
 									if (!error && response.statusCode == 200) {
-										var formData = {};
-										$ = cheerio.load(body);
 
 										// Get input elemnts for form
+										var formData = {};
+										$ = cheerio.load(body);
 										var lastUpdate = $('#set_a dd').first().find('span').text();
 										var i = lastUpdate.indexOf('Last Update: ')+13;
 										var j = lastUpdate.indexOf(' PDT');
@@ -148,6 +151,11 @@ var getDNSinfo = function(callback) {
 										var ownIP = $('#port_ip').attr('value');
 										var result = {dnsIP: dnsIP, ownIP: ownIP, lastUpdate: lastUpdate};
 										console.log(result);
+
+										// set own external ip
+										globals.my_ip = ownIP;
+
+										//return data
 										callback(result);
 
 									} else {
