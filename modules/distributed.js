@@ -90,7 +90,7 @@ var callMaster = function(callback) {
 var initLoop = function() {
 	console.log('entering init loop');
 	setTimeout(function () {
-		distributed.initialize(function(status) {
+		initialize(function(status) {
 			//Node initialised successfully
 			if(status) {
 				console.log('Node initialized as', status);
