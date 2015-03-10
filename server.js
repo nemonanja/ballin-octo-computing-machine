@@ -32,20 +32,25 @@ app.use(express.static(view));
 // Register new node
 app.get('/register', function(req, res) {
 	console.log('register called');
-	console.log(req.body);
-	if(globals.is_master && req.body.data){
-		crypt.decryptJSON(req.body.data, function(data) {
+	if(globals.is_master && req.query && req.query.data){
+		crypt.decryptJSON(req.query.data, function(data) {
 			var clientIp = req.ip;
-			console.log(data);
-			globals.ip_arr.push(clientIp);
-			console.log('return ip_arr:', globals.ip_arr);
-			crypt.sendCryptJSON({ip_arr: globals.ip_arr, ip: clientIp}, res);
-			//res.json({ip_arr: globals.ip_arr, ip: clientIp});
+			var uuid = data.uuid;
+
+			// Gice ip and uuid to list handler
+			distributed.ipListHandler(clientIp, uuid, function(success) {
+				if(success){
+					console.log('return ip_list:', globals.ip_list);
+					crypt.sendCryptJSON({ip_list: globals.ip_list, ip: clientIp}, res);
+				} else {
+					console.log('return false');
+					crypt.sendCryptJSON(false, res);
+				}
+			});
 		});
 	} else {
 		console.log('return false');
 		crypt.sendCryptJSON(false, res);
-		//res.json(false);
 	}
 });
 

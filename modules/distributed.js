@@ -121,6 +121,26 @@ var uuid = function() {
 	console.log("Added uuid:", uuid);
 };
 
+var ipListHandler = function(uuid, ip, callback) {
+	if(uuid===uuid.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i)) {
+		for (var key in globals.ip_list) {
+			if(key===uuid) {
+				globals.ip_list[data.uuid] = clientIp;
+				break;
+			} else if(globals.ip_list[key]===ip) {
+				delete globals.ip_list[key];
+				globals.ip_list[data.uuid] = clientIp;
+				break;
+			}
+		}
+		callback(true);
+	} else {
+		callback(false);
+	}
+};
+
 exports.initialize = initialize;
 exports.initLoop = initLoop;
+exports.uuidVerify = uuidVerify;
 exports.uuid = uuid;
+exports.ipListHandler = ipListHandler;
