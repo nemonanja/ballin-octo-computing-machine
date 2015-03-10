@@ -11,41 +11,25 @@ var decipher = crypto.createDecipher(config.crypt.algorithm, config.crypt.passwo
 // ===================
 //  Public functions 
 // ===================
-
-var encrypt = function(text, callback){
-	var crypted = cipher.update(text,'utf8','hex')
-	crypted += cipher.final('hex');
-	callback(crypted);
-};
  
-var decrypt = function(text, callback){
-	var dec = decipher.update(text,'hex','utf8')
+var decryptJSON  = function(json, callback){
+	console.log(json);
+	var dec = decipher.update(json,'hex','utf8')
 	dec += decipher.final('utf8');
+	var object = JSON.parse(dec);
+	console.log(object);
+
 	callback(dec);
 };
 
-var encryptJSON = function(json, callback){
-	var crypted = cipher.update(JSON.stringify(json),'utf8','hex')
-	crypted += cipher.final('hex');
-	callback(crypted);
-};
- 
-var decryptJSON  = function(json, callback){
-	var dec = decipher.update(json,'hex','utf8')
-	dec += decipher.final('utf8');
-	callback(JSON.parse(dec));
-};
-
 var sendCryptJSON  = function(json, res){
-	var txt = JSON.stringify(json);
-	console.log("sting:", txt)
-  	var crypted = cipher.update(txt,'utf8','hex')
-  	crypted += cipher.final('hex');
-  	res.send(crypted);
+	json = JSON.stringify(json);
+	console.log(json);
+	var crypted = cipher.update(json,'utf8','hex')
+	crypted += cipher.final('hex');
+	console.log(crypted);
+	res.send(crypted);
 };
 
-exports.encrypt = encrypt;
-exports.decrypt = decrypt;
-exports.encryptJSON = encryptJSON;
 exports.decryptJSON = decryptJSON;
 exports.sendCryptJSON = sendCryptJSON;

@@ -30,10 +30,10 @@ app.use(express.static(view));
 app.get('/register', function(req, res) {
 	console.log('register');
 	if(globals.is_master){
-		var clientIp = req.headers['X-Forwarded-For'];
+		var clientIp = req.ip;
 		globals.ip_arr.push(clientIp);
-		console.log('return ip_arr:', global.ip_arr);
-		crypt.sendCryptJSON({ip_arr: ip_arr, ip: clientIp}, res);
+		console.log('return ip_arr:', globals.ip_arr);
+		crypt.sendCryptJSON({ip_arr: globals.ip_arr, ip: clientIp}, res);
 	} else {
 		console.log('return false');
 		crypt.sendCryptJSON(false, res);

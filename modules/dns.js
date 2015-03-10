@@ -74,6 +74,7 @@ var updateIP = function(callback) {
 													console.log('update success new ip:', formData['host[ip]']);
 													// set master ip to globals
 													globals.master_ip=formData['host[ip]'];
+													globals.is_master=true;
 													//return master ip
 													callback(formData['host[ip]']);
 												} else {
