@@ -71,7 +71,7 @@ var callMaster = function(callback) {
 				var data = body;
 				console.log('json:', data);
 				// check that we had valid response
-				if(data!=null && data.ip_arr!=null && data.ip_arr.length>0 && data.ip!=null) {
+				if(data!=null && data.ip_arr!=null && data.ip!=null) {
 					globals.my_ip = data.ip;
 					globals.ip_arr = data.ip_arr;
 					callback(true);
