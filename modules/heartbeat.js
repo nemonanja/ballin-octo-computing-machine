@@ -24,14 +24,13 @@ exports.isAlive = function(req, res){
 }
 
 exports.startBeat = function(cron, master, callback) {
-    console.log(callback);
     if(task === null) {
         failback = callback;
     	task = schedule.scheduleJob(cron, function() {
         	//console.log('Ping: ' + master);
             sendHeartBeatRequest(master);
     	});
-        console.log('Scheduled heartbeat task ' + failback);
+        console.log('Scheduled heartbeat task');
     }
 }
 
@@ -85,10 +84,9 @@ function pingTimeout() {
     console.log('Ping timed out(' + failed + ')');
     if(failed >= 0) {
         stopBeat();
-        //if(failback) {
-            console.log('a',failback);
-            //failback();
-       // }
+        if(failback) {
+            failback();
+        }
     } else {
         failed++;
     }
