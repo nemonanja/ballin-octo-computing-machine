@@ -8,7 +8,7 @@ var dns = require('./dns.js');
 var request = require('request').defaults({jar: true});
 var moment = require('moment');
 
-var registerUrl = 'http://'+config.dns.url+':'+config.port+'/register';
+var registerUrl = 'http://'+'212.50.133.104'+':'+config.port+'/register';
 
 // ===================
 //  Public functions 
