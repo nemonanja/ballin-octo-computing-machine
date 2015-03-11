@@ -6,7 +6,7 @@ var task = null;
 var latencies = {};
 
 exports.isAlive = function(req, res){
-    crypt.decryptJSON(req.query.data, function(data) {
+    crypt.decryptJSON(req.body, function(data) {
         if(jsonCheck(data, ["ping", "timestamp"])){
         	//console.log(req.body.ping);
         	//console.log(monument.unix(req.body.timestamp).format());
@@ -53,15 +53,18 @@ function sendHeartBeatRequest(host) {
                 headers: {'Content-Type': 'text/html'}
             },
     	    function (error, response, body) {
-    	        if (!error && response.statusCode == 200) {
-    	            //console.log('Pong: ' + body);
-                    if(jsonCheck(body, ["pong", "timestamp"])) {
-                        console.log('Pong from: ' + body.pong + ' ' + body.timestamp);
-                        latencies[body.pong] = body.timestamp - time;
-                        //console.log(body.pong);
-                        //console.log(body.timestamp);
-                    }
-    	        }
+    	        if (!error && response.statusCode == 200) {    	            
+                    crypt.decryptJSON(body, function(data) {
+                        if(jsonCheck(data, ["pong", "timestamp"])) {
+                            console.log('Pong from: ' + data.pong + ' ' + data.timestamp);
+                            latencies[data.pong] = data.timestamp - time;
+                            //console.log(body.pong);
+                            //console.log(body.timestamp);
+                        }
+                    });
+    	        } else {
+                    console.log('Ewwwror: ' + error);
+                }
                 //console.log(response.statusCode);
     	    }
         );
