@@ -86,22 +86,22 @@ app.post('/ipnotify', function(req, res) {
 //nemo vitun homo jäbä kutsuu tätä :DDD
 app.post('/removekebabnemo', jsonParser, function(req, res){
 	worker.callnodes(req.body.ip, function(result){
--		worker.traceroute(req.body.ip, 64, function(error, trace){
--			if (error){
--				console.log(error.toString())
--				res.json(result)
--			}else{
--				worker.ping(req.body.ip, function (error, time) {
--					if (error){
--						res.json(result)
--						console.log (target + ": " + error.toString ());
--					}else{
--    					result.push({"uuid": globals.uuid, "traceroute": trace, "ping": time})
--    					res.json(result)
--					}
--				})
--			}
--		})
+		worker.traceroute(req.body.ip, 64, function(error, trace){
+			if (error){
+				console.log(error.toString())
+				res.json(result)
+			}else{
+				worker.ping(req.body.ip, function (error, time) {
+					if (error){
+						res.json(result)
+						console.log (target + ": " + error.toString ());
+					}else{
+    					result.push({"uuid": globals.uuid, "traceroute": trace, "ping": time})
+    					res.json(result)
+					}
+				})
+			}
+		})
  	})
 })
 
