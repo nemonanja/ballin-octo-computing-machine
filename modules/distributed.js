@@ -2,8 +2,8 @@
 
 var globals = require('../globals.js');
 var config = require('../config.json');
+var heartbeat = require('./heartbeat.js');
 var dns = require('./dns.js');
-//var heartbeat = require('./modules/heartbeat.js');
 
 var request = require('request').defaults({jar: true});
 var moment = require('moment');
@@ -34,12 +34,6 @@ var initialize = function(callback) {
 				var now = moment().valueOf();
 				var then = moment(data.lastUpdate).utc('-0700').valueOf()+25200000;
 				var elapsed = now - then;
-
-
-				console.log(now);
-				console.log(then);
-				console.log(elapsed);
-
 				// DNS updated more than 2 minutes ago but no response,
 				if(elapsed==null || elapsed>60000) {
 					console.log('Updated over 1 min ago --> taking master');
@@ -120,8 +114,8 @@ var callMaster = function(callback) {
 };
 
 // Start heartbeat
-var startHearbeat = function() {
-	console.log("wub wub");
+var startHearbeat = function() {	
+	heartbeat.startBeat('*/1 * * * *', 'http://'+config.dns.url+':'+config.port, newMasterSearch());
 };
 
 // Generate uuid
@@ -176,6 +170,21 @@ var notify = function(ipList, uuid) {
 			});
 		}
 	}
+};
+
+var newMasterSearch = function() {
+	var pingList = {};
+	var ipList = globals.ip_list;
+
+	for (var key in globals.ip_list) {
+		heartbeat.sendHeartBeatRequest(globals.ip_list, function(data) {
+			pingList[key] = data;
+			if(pingList.length == ipList.length) {
+				console.log(pingList);
+			}
+		});
+	}
+
 };
 
 
