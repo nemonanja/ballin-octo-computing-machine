@@ -187,7 +187,7 @@ var askOthers = function() {
 		                }
 
 		                // Got all responses
-		                if(pingList.length==(ipList.length-)) {
+		                if(pingList.length==(ipList.length-1)) {
 		                	var count = 0;
 		                	// Count response states
 							for (var i=0; i<pingList.length; i++) {
