@@ -123,7 +123,7 @@ app.post('/istheremaster', textParser, function(req,res){
 	console.log('istheremaster called');
 	crypt.decryptJSON(req.body, function(data){
 		if(globals.ready && data.check) {
-			distributed.pingMaster(function(status) {
+			distributed.pingMaster(function(state) {
 				crypt.sendCryptJSON({state: state}, res);
 			});
 		}

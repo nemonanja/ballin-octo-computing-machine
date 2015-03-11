@@ -187,7 +187,7 @@ var askOthers = function() {
 		                }
 
 		                // Got all responses
-		                if(pingList.length==ipList.length) {
+		                if(pingList.length==(ipList.length-)) {
 		                	var count = 0;
 		                	// Count response states
 							for (var i=0; i<pingList.length; i++) {
@@ -197,7 +197,7 @@ var askOthers = function() {
 							}
 
 							// More than half of nodes can't connect master --> start new master selection
-							if((count/2)>ipList.length) {
+							if((count/2)>(ipList.length-1)) {
 								notifySelectionStart();
 								newMasterSearch();
 							// More than half of nodes can connect to master --> go to init loop
