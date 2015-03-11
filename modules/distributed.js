@@ -157,10 +157,10 @@ var addSlave = function(uuid, ip, callback) {
 // Notify all old slave nodes about new node
 var notify = function(ipList, uuid) {
 	console.log('notify: ', ipList)
-	for (var i=0; i++; ipList.length) {
+	for (var i=0; i<ipList.length; i++) {
 		if(ipList[i].uuid!=uuid) {
 			crypt.encryptJSON({ip_list: ipList}, function(data) {
-				console.log('Sending new ip list to:', ipList[key]);
+				console.log('Sending new ip list to:', ipList[i].uuid);
 				request.post(
 					'http://'+ipList[i].ip+':'+config.port+'/ipnotify',
 					{qs:{data: data}},
@@ -176,10 +176,11 @@ var notify = function(ipList, uuid) {
 
 var newMasterSearch = function() {
 	var pingList = [];
-	var ipList = globals.ip_list;
-
-	for (var i=0; i++; ipList.length) {
-		heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, function(data) {
+	var ipList = globals.ip_list.slice();
+	console.log('lololo',ipList);
+	for (var i=0; i<ipList.length; i++) {
+		console.log('pipipi:', 'http://'+ipList[i].ip+':'+config.port);
+		heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(data, uuid) {
 			console.log('lol pinged:', data);
 			pingList.push(data);
 			console.log('asd:', pingList.length, ipList.length)
