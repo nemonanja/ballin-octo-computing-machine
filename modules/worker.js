@@ -1,4 +1,7 @@
 var netping = require("net-ping")
+var request = require('request').defaults({jar: true});
+
+
 var options = {
 	retries: 1,
 	timeout: 2000
@@ -56,11 +59,27 @@ function TimeExceededError (source) {
 }
 
 
-exports.callnodes = function(callback){
+exports.callnodes = function(ip, callback){
+	for(var node in ip_list){
+    	request.post(ip_list[node] + '/taskcall', {json: {"ip": ip}}, function(error, response, body){
+    		if (!error && response.statusCode == 200 && jsonCheck(body, ["traceroute", "ping"])) {
+                
+	        }
+
+    	})
+	}
 
 
 }
 
-
+function jsonCheck(json, checks) {
+    var result = true;
+    checks.forEach(function(check) {
+        if (!json.hasOwnProperty(check)) {
+            result = false;                
+        }
+    });
+    return result;
+}
 
 

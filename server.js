@@ -7,7 +7,7 @@ var config = require('./config.json');
 // Local modules
 var distributed = require('./modules/distributed.js');
 var crypt = require('./modules/cryptography.js');
-//var worker = require('./modules/worker.js');
+var worker = require('./modules/worker.js');
 
 // External modules
 var express  = require('express');
@@ -72,6 +72,30 @@ app.post('/ipnotify', function(req, res) {
 		console.log('return false');
 		crypt.sendCryptJSON(false, res);
 	}
+});
+
+app.post('/taskcall', function(req,res){
+	var pingres
+	var tracertres
+
+	worker.traceroute("8.8.8.8", 64, function(error, results){
+		if (error){
+			res.json({})
+			console.log(error.toString())
+		}else{
+			tracertres = results
+			worker.ping("8.8.8.8", function (error, time) {
+				if (error){
+					console.log (target + ": " + error.toString ());
+					res.json({})
+				}else{
+					pingres = time
+					res.json({"traceroute" : tracertres, "ping": pingres})
+	    			console.log("Time: " + time)
+				}
+			})
+		}
+	})
 });
 
 // start listening
