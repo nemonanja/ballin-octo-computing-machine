@@ -168,7 +168,9 @@ var notify = function(ipList, uuid) {
 						if(error) {
 							console.log(error);
 						}
-					});ä
+					}
+				);
+			});
 		}
 	}
 };
