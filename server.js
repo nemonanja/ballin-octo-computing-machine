@@ -1,8 +1,8 @@
 // Global variables
-var globals = require('./globals');
+globals = require('./globals');
 
 // Static configs
-var config = require('./config.json');
+config = require('./config.json');
 
 // Local modules
 var distributed = require('./modules/distributed.js');
@@ -66,7 +66,7 @@ app.post('/register', textParser, function(req, res) {
 // IP list changed
 app.post('/ipnotify', function(req, res) {
 	console.log('ipnotify called');
-	if(!globals.is_master && req.query && req.query.data){
+	if(globals.ready && !globals.is_master && req.query && req.query.data){
 		crypt.decryptJSON(req.query.data, function(data) {
 			if(data.ip_list) {
 				console.log('new ip list:', data);
@@ -91,6 +91,7 @@ app.post('/removekebabnemo', bodyParser, function(req, res){
 	})
 })
 
+// Do task
 app.post('/taskcall', textParser, function(req,res){
 	var pingres
 	var tracertres
@@ -116,6 +117,36 @@ app.post('/taskcall', textParser, function(req,res){
 	})
 });
 
+// Check is master alive
+app.post('/istheremaster', textParser, function(req,res){
+	crypt.decryptJSON(req.body, function(data){
+		if(globals.ready && data.check) {
+			distributed.pingMaster(function(status) {
+				crypt.sendCryptJSON({state: state}, res);
+			});
+		}
+	})
+});
+
+// Start looking new master
+app.post('/searchnewmaster', textParser, function(req,res){
+	crypt.decryptJSON(req.body, function(data){
+		if(globals.ready && data.startSearch) {
+			distributed.newMasterSearch();
+		}
+	})
+});
+
+// Start looking new master
+app.post('/bemaster', textParser, function(req,res){
+	crypt.decryptJSON(req.body, function(data){
+		if(globals.ready && data.beMaster) {
+			distributed.beMaster();
+		}
+	})
+});
+
+// Heartbeat routes
 app.post('/heartbeat', textParser, heartbeat.isAlive);
 app.get('/heartbeat/latencies', heartbeat.getLatencies);
 
