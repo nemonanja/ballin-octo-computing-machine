@@ -6,7 +6,7 @@ var config = require('./config.json');
 
 // Local modules
 var distributed = require('./modules/distributed.js');
-var crypt = require('./modules/cryptography.js');
+crypt = require('./modules/cryptography.js');
 var heartbeat = require('./modules/heartbeat.js');
 //var worker = require('./modules/worker.js');
 
@@ -18,6 +18,7 @@ var app = express();
 
 var bodyParser = require('body-parser');
 var jsonParser = bodyParser.json();
+var textParser = bodyParser.text({type: 'text/html'});
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -38,7 +39,7 @@ app.use(express.static(view));
 // ======
 
 // Register new node
-app.post('/register', function(req, res) {
+app.post('/register', textParser, function(req, res) {
 	console.log('register called');
 	if(globals.is_master && req.query && req.query.data){
 		crypt.decryptJSON(req.query.data, function(data) {

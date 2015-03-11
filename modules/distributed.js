@@ -3,7 +3,6 @@
 var globals = require('../globals.js');
 var config = require('../config.json');
 var dns = require('./dns.js');
-var crypt = require('./cryptography.js');
 //var heartbeat = require('./modules/heartbeat.js');
 
 var request = require('request').defaults({jar: true});
@@ -85,7 +84,8 @@ var callMaster = function(callback) {
 		request.post(
 			{
 				url: registerUrl,
-				body: data
+				body: data,
+				headers: {'Content-Type': 'text/html'}
 			},
 			function (error, response, body) {
 				if (!error && response.statusCode == 200) {
