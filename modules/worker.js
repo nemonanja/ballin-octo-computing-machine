@@ -86,7 +86,7 @@ exports.callnodes = function(ip, callback){
 		    		}
 
 		    		if (index == globals.ip_list.length){
-		    			console.log(index)
+		    			
 		    			callback(result)
 		    		}
 
