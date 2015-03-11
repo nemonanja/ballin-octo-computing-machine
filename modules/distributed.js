@@ -163,6 +163,7 @@ var askOthers = function() {
 	var pingList = [];
 	var ipList = globals.ip_list.slice();
 	console.log('Asking all nodes if they see master:', ipList);
+	globals.ongoing = true;
 	for (var i=0; i<ipList.length; i++) {
 		if(!(ipList[i].uuid===globals.uuid)) {
 			crypt.encryptJSON({ check: true }, function(data) {
@@ -313,6 +314,7 @@ var beMaster = function(uuid) {
 
 // Try to take domain
 var takeOver = function(callback) {
+	globals.ongoing = false;
 	dns.updateIP(function(updateData) {
 		// Error updating domain
 		if(!updateData && callback) {
