@@ -46,7 +46,7 @@ exports.getLatencies = function(req, res) {
     crypt.sendCryptJSON(latencies, res);
 }
 
-function sendHeartBeatRequest(host) {
+exports.sendHeartBeatRequest(host, callback) {
     var time = monument.utc().valueOf();
     crypt.encryptJSON({ ping:Globals.uuid, timestamp:time }, function(data) {
         request.post(
@@ -61,12 +61,18 @@ function sendHeartBeatRequest(host) {
                     crypt.decryptJSON(body, function(data) {
                         if(jsonCheck(data, ["pong", "timestamp"])) {
                             console.log('Pong from: ' + data.pong + ' ' + data.timestamp);
-                            latencies[data.pong] = data.timestamp - time;
-                            //console.log(body.pong);
-                            //console.log(body.timestamp);
+                            latency = monument.utc().valueOf() - time;
+                            latencies[data.pong] = latency;
+                            if(callback) {
+                                callback(latency);
+                            }
                         }
                     });
     	        } else {
+                    if(callback) {
+                        callback(-1);
+                        return;
+                    }
                     pingTimeout();
                 }                
     	    }
