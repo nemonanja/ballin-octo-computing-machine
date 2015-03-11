@@ -341,4 +341,4 @@ exports.uuid = uuid;
 exports.addSlave = addSlave;
 exports.pingMaster = pingMaster;
 exports.newMasterSearch = newMasterSearch;
-exports.beMaster =beMaster();
+exports.beMaster =beMaster;
