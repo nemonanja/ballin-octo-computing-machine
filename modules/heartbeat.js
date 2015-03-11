@@ -52,19 +52,20 @@ function sendHeartBeatRequest(host) {
                 body: data,
                 headers: {'Content-Type': 'text/html'}
             },
-	    function (error, response, body) {
-	        if (!error && response.statusCode == 200) {
-	            //console.log('Pong: ' + body);
-                if(jsonCheck(body, ["pong", "timestamp"])) {
-                    console.log('Pong from: ' + body.pong + ' ' + body.timestamp);
-                    latencies[body.pong] = body.timestamp - time;
-                    //console.log(body.pong);
-                    //console.log(body.timestamp);
-                }
-	        }
-            //console.log(response.statusCode);
-	    }
-	);
+    	    function (error, response, body) {
+    	        if (!error && response.statusCode == 200) {
+    	            //console.log('Pong: ' + body);
+                    if(jsonCheck(body, ["pong", "timestamp"])) {
+                        console.log('Pong from: ' + body.pong + ' ' + body.timestamp);
+                        latencies[body.pong] = body.timestamp - time;
+                        //console.log(body.pong);
+                        //console.log(body.timestamp);
+                    }
+    	        }
+                //console.log(response.statusCode);
+    	    }
+        );
+	});
 }
 
 function jsonCheck(json, checks) {
