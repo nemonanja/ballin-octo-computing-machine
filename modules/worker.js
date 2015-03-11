@@ -85,7 +85,7 @@ exports.callnodes = function(ip, callback){
 			        	}
 		    		}
 
-		    		if (index == Globals.ip_list.length){
+		    		if (index == globals.ip_list.length){
 		    			callback(result)
 		    		}
 
