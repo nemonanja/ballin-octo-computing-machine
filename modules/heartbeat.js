@@ -1,5 +1,4 @@
 var monument = require('moment');
-var os = require("os");
 var schedule = require('node-schedule');
 var request = require('request');
 
@@ -12,7 +11,8 @@ exports.isAlive = function(req, res){
     	//console.log(monument.unix(req.body.timestamp).format());
 		//console.log("%s", monument.utc().unix());
         console.log('Ping from: ' + req.body.ping + ' ' + req.body.timestamp);
-		res.json({pong:os.hostname(), timestamp:monument.utc().unix()});		
+		//res.json({pong:Globals.uuid, timestamp:monument.utc().unix()});		
+        crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().unix()});
     } else {
         console.log(req.body);
         res.sendStatus(400);
@@ -44,7 +44,7 @@ exports.getLatencies = function(req, res) {
 function sendHeartBeatRequest(host) {
     var time = monument.utc().unix();
 	request.post(host + '/heartbeat',
-	    { json: { ping:os.hostname(), timestamp:time } },
+	    { json: { ping:Globals.uuid, timestamp:time } },
 	    function (error, response, body) {
 	        if (!error && response.statusCode == 200) {
 	            //console.log('Pong: ' + body);
