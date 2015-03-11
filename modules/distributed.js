@@ -66,6 +66,7 @@ var initLoop = function() {
 var callMaster = function(callback) {
 	console.log('Call master to register node');
 	crypt.encryptJSON({uuid: globals.uuid}, function(data) {
+		console.log('Register url:', registerUrl);
 		request.post(
 			{
 				url: registerUrl,
