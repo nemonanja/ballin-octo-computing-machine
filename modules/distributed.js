@@ -41,7 +41,8 @@ var initialize = function(callback) {
 				console.log(elapsed);
 
 				// DNS updated more than 2 minutes ago but no response,
-				if(elapsed==null || elapsed>60) {
+				if(elapsed==null || elapsed>60000) {
+					console.log('Updated over 1 min ago --> taking master');
 					// Try to take domain
 					dns.updateIP(function(updateData) {
 						// Error updating domain
@@ -64,6 +65,7 @@ var initialize = function(callback) {
 						}
 					});
 				} else {
+					console.log('Updated under 1 min ago --> wait 1 min');
 					callback(false);
 				}
 			});		
