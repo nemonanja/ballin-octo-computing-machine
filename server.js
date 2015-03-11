@@ -87,9 +87,23 @@ app.post('/ipnotify', function(req, res) {
 app.post('/removekebabnemo', jsonParser, function(req, res){
 	console.log("SPERMA: " + req.body.ip)
 	worker.callnodes(req.body.ip, function(result){
-		console.log("WORKER ALOTETTU: " + req.body.ip)
-
-		res.json(result)
+		worker.traceroute(req.body.ip, 64, function(error, trace){
+			if (error){
+				console.log(error.toString())
+				res.json(result)
+			}else{
+				worker.ping(req.body.ip, function (error, time) {
+					if (error){
+						res.json(result)
+						console.log (target + ": " + error.toString ());
+					}else{
+    					console.log("Time: " + time)
+    					result.push({"uuid": globals.uuid, "traceroute": trace, "ping": time})
+    					res.json(result)
+					}
+				})
+			}
+		})
 	})
 })
 
