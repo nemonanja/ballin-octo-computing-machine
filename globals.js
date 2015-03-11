@@ -1,6 +1,6 @@
 Globals = {
 	uuid		: "",
-  	ip_list		: {},
+  	ip_list		: [],
   	is_master	: false,
   	my_ip		: ''
 };

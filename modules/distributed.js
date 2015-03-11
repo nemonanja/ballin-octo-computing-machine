@@ -132,15 +132,17 @@ var uuid = function() {
 var addSlave = function(uuid, ip, callback) {
 	// check if uuid is valid
 	if(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
+		var newNode = {uuid: uuid, ip: ip};
+
 		//check if already in list
-		for (var key in globals.ip_list) {
-			if(key===uuid || globals.ip_list[key]===ip) {
-				delete globals.ip_list[key];
+		for (var i=0; i++; globals.ip_list.length) {
+			if(globals.ip_list[i].uuid===uuid || globals.ip_list[i].ip===ip) {
+				globals.ip_list.splice(i, 1);
 				break;
 			}
 		}
 		// add to list
-		globals.ip_list[uuid] = ip;
+		globals.ip_list.push(newNode);
 
 		// Notify all slaves
 		notify(globals.ip_list, uuid);
@@ -155,12 +157,12 @@ var addSlave = function(uuid, ip, callback) {
 // Notify all old slave nodes about new node
 var notify = function(ipList, uuid) {
 	console.log('notify: ', ipList)
-	for (var key in ipList) {
-		if(key!=uuid) {
+	for (var i=0; i++; ipList.length) {
+		if(ipList[i].uuid!=uuid) {
 			crypt.encryptJSON({ip_list: ipList}, function(data) {
 				console.log('Sending new ip list to:', ipList[key]);
 				request.post(
-					'http://'+ipList[key]+':'+config.port+'/ipnotify',
+					'http://'+ipList[i].ip+':'+config.port+'/ipnotify',
 					{qs:{data: data}},
 					function (error, response, body) {
 						if(error) {
@@ -173,15 +175,17 @@ var notify = function(ipList, uuid) {
 };
 
 var newMasterSearch = function() {
-	var pingList = {};
+	var pingList = [];
 	var ipList = globals.ip_list;
 
-	for (var key in ipList) {
-		heartbeat.sendHeartBeatRequest('http://'+ipList[key]+':'+config.port, function(data) {
+	for (var i=0; i++; ipList.length) {
+		heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, function(data) {
 			console.log('lol pinged:', data);
-			pingList[key] = data;
+			pingList.push(data);
+			console.log('asd:', pingList.length, ipList.length)
+
 			if(pingList.length == ipList.length) {
-				console.log(pingList);
+				console.log('list',pingList);
 			}
 		});
 	}
