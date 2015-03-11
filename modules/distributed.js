@@ -161,7 +161,7 @@ var notify = function(ipList, uuid) {
 // Ask if we need new master
 var askOthers = function() {
 	var pingList = [];
-	var ipList = globals.ip_list.slice();
+	var ipList = globals.ip_list;
 	console.log('Asking all nodes if they see master:', ipList);
 	for (var i=0; i<ipList.length; i++) {
 		crypt.encryptJSON({ check: true }, function(data) {
