@@ -180,9 +180,9 @@ var newMasterSearch = function() {
 	console.log('lololo',ipList);
 	for (var i=0; i<ipList.length; i++) {
 		console.log('pipipi:', 'http://'+ipList[i].ip+':'+config.port);
-		heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(data, uuid) {
+		heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(latency, uuid) {
 			console.log('lol pinged:', data);
-			pingList.push(data);
+			pingList.push({uuid: uuid, latency:latency);
 			console.log('asd:', pingList.length, ipList.length)
 
 			if(pingList.length == ipList.length) {
