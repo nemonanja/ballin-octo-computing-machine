@@ -64,6 +64,7 @@ var initLoop = function() {
 };
 
 var callMaster = function(callback) {
+	console.log('Call master to register node');
 	crypt.encryptJSON({uuid: globals.uuid}, function(data) {
 		request.post(
 			{
@@ -72,8 +73,10 @@ var callMaster = function(callback) {
 				headers: {'Content-Type': 'text/html'}
 			},
 			function (error, response, body) {
+				console.log('Register response:', body);
 				if (!error && response.statusCode == 200) {
 					crypt.decryptJSON(body, function(data) {
+						console.log('Register encrypted response:', data);
 						// check that we had valid response
 						if(data!=null && data!=false &&'ip_list' in data) {
 							globals.my_ip = data.ip;
@@ -341,4 +344,4 @@ exports.uuid = uuid;
 exports.addSlave = addSlave;
 exports.pingMaster = pingMaster;
 exports.newMasterSearch = newMasterSearch;
-exports.beMaster =beMaster;
+exports.takeOver =takeOver;
