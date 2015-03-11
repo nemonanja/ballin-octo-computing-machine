@@ -78,7 +78,7 @@ exports.callnodes = function(ip, callback){
 		    		}else{
 		    			index += 1
 		    			if (response.statusCode == 200) {
-		    				crypt.decryptJSON(req.body, function(data){
+		    				crypt.decryptJSON(body, function(data){
 		    					console.log("VAGINA: " + data)
 		    					if(jsonCheck(data, ["traceroute", "ping"])){
 		    						result.append({"ip": response.headers.host, "response": data})
