@@ -41,8 +41,8 @@ app.use(express.static(view));
 // Register new node
 app.post('/register', textParser, function(req, res) {
 	console.log('register called');
-	if(globals.is_master && req.query && req.query.data){
-		crypt.decryptJSON(req.query.data, function(data) {
+	if(globals.is_master && req.body){
+		crypt.decryptJSON(req.body, function(data) {
 			var clientIp = req.ip;
 			var uuid = data.uuid;
 			// Give ip and uuid to list handler
