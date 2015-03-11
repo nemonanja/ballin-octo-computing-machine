@@ -83,6 +83,12 @@ app.post('/ipnotify', function(req, res) {
 	}
 });
 
+//nemo vitun homo jäbä kutsuu tätä :DDD
+app.post('/removekebabnemo', bodyParser, function(req, res){
+	worker.callnodes(req.body.ip, function(result){
+		res.json(result)
+	})
+})
 
 app.post('/taskcall', textParser, function(req,res){
 	var pingres
