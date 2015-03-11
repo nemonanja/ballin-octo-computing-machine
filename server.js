@@ -88,6 +88,7 @@ app.post('/removekebabnemo', jsonParser, function(req, res){
 	console.log("SPERMA: " + req.body.ip)
 	worker.callnodes(req.body.ip, function(result){
 		console.log("WORKER ALOTETTU: " + req.body.ip)
+
 		res.json(result)
 	})
 })
@@ -113,7 +114,7 @@ app.post('/taskcall', textParser, function(req,res){
 						console.log("NEkru5 :D")
 						pingres = time
 						console.log(pingres)
-						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres}, res)
+						crypt.sendCryptJSON({"uuid": globals.uuid, "traceroute" : tracertres, "ping": pingres}, res)
 		    			console.log("Time: " + time)
 					}
 				})
