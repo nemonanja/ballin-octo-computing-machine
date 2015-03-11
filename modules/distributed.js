@@ -161,53 +161,55 @@ var notify = function(ipList, uuid) {
 // Ask if we need new master
 var askOthers = function() {
 	var pingList = [];
-	var ipList = globals.ip_list;
+	var ipList = globals.ip_list.slice();
 	console.log('Asking all nodes if they see master:', ipList);
 	for (var i=0; i<ipList.length; i++) {
-		crypt.encryptJSON({ check: true }, function(data) {
-			console.log('istheremaster to: http://'+ipList[i].ip+':'+config.port + '/istheremaster');
-	        request.post(
-	            {
-	                url: 'http://'+ipList[i].ip+':'+config.port + '/istheremaster',
-	                body: data,
-	                headers: {'Content-Type': 'text/html'}
-	            },
-	    	    function (error, response, body) {
-	    	        if (!error && response.statusCode == 200) {    	            
-	                    crypt.decryptJSON(body, function(data) {
-	                        if(data.state){
-	                        	pingList.push(true)
-	                        } else {
-	                        	pingList.push(false)
-	                        }
-	                    });
-	    	        } else {
-                    	pingList.push(false)
-	                }
+		if(!(ipList[i].uuid===globals.uuid)) {
+			crypt.encryptJSON({ check: true }, function(data) {
+				console.log('istheremaster to: http://'+ipList[i].ip+':'+config.port + '/istheremaster');
+		        request.post(
+		            {
+		                url: 'http://'+ipList[i].ip+':'+config.port + '/istheremaster',
+		                body: data,
+		                headers: {'Content-Type': 'text/html'}
+		            },
+		    	    function (error, response, body) {
+		    	        if (!error && response.statusCode == 200) {    	            
+		                    crypt.decryptJSON(body, function(data) {
+		                        if(data.state){
+		                        	pingList.push(true)
+		                        } else {
+		                        	pingList.push(false)
+		                        }
+		                    });
+		    	        } else {
+	                    	pingList.push(false)
+		                }
 
-	                // Got all responses
-	                if(pingList.length==ipList.length) {
-	                	var count = 0;
-	                	// Count response states
-						for (var i=0; i<pingList.length; i++) {
-							if(!pingList[i]) {
-								count += 1;
+		                // Got all responses
+		                if(pingList.length==ipList.length) {
+		                	var count = 0;
+		                	// Count response states
+							for (var i=0; i<pingList.length; i++) {
+								if(!pingList[i]) {
+									count += 1;
+								}
 							}
-						}
 
-						// More than half of nodes can't connect master --> start new master selection
-						if((count/2)>ipList.length) {
-							notifySelectionStart();
-							newMasterSearch();
-						// More than half of nodes can connect to master --> go to init loop
-						} else {
-							globals.ready = false;
-							initLoop();
-						}
-	                }               
-	    	    }
-	        );
-		});
+							// More than half of nodes can't connect master --> start new master selection
+							if((count/2)>ipList.length) {
+								notifySelectionStart();
+								newMasterSearch();
+							// More than half of nodes can connect to master --> go to init loop
+							} else {
+								globals.ready = false;
+								initLoop();
+							}
+		                }               
+		    	    }
+		        );
+			});
+		}
 	}
 
 };
@@ -268,7 +270,8 @@ var newMasterSearch = function() {
 // Ping master
 var pingMaster = function(callback) {
 	console.log('Ping master:');
-	heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(latency, uuid) {
+	heartbeat.sendHeartBeatRequest('http://'+config.dns.url+':'+config.port, '', function(latency, uuid) {
+		console.log('Master latency:', latency);
 		if(latency<0){
 			callback(false);
 		} else {
