@@ -7,6 +7,7 @@ var config = require('./config.json');
 // Local modules
 var distributed = require('./modules/distributed.js');
 var crypt = require('./modules/cryptography.js');
+var heartbeat = require('./modules/heartbeat.js');
 //var worker = require('./modules/worker.js');
 
 // External modules
@@ -14,6 +15,13 @@ var express  = require('express');
 
 // Config express
 var app = express();
+
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 var pub = __dirname + '/public',
 	view = __dirname + '/views';
@@ -73,6 +81,9 @@ app.post('/ipnotify', function(req, res) {
 		crypt.sendCryptJSON(false, res);
 	}
 });
+
+app.post('/heartbeat', jsonParser, heartbeat.isAlive);
+app.get('/heartbeat/latencies', heartbeat.getLatencies);
 
 // start listening
 app.listen(config.port);
