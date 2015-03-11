@@ -6,17 +6,19 @@ var task = null;
 var latencies = {};
 
 exports.isAlive = function(req, res){
-    if(jsonCheck(req.body, ["ping", "timestamp"])){
-    	//console.log(req.body.ping);
-    	//console.log(monument.unix(req.body.timestamp).format());
-		//console.log("%s", monument.utc().unix());
-        console.log('Ping from: ' + req.body.ping + ' ' + req.body.timestamp);
-		//res.json({pong:Globals.uuid, timestamp:monument.utc().unix()});		
-        crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().unix()});
-    } else {
-        console.log(req.body);
-        res.sendStatus(400);
-    }
+    crypt.decryptJSON(req.query.data, function(data) {
+        if(jsonCheck(data, ["ping", "timestamp"])){
+        	//console.log(req.body.ping);
+        	//console.log(monument.unix(req.body.timestamp).format());
+    		//console.log("%s", monument.utc().unix());
+            console.log('Ping from: ' + data.ping + ' ' + data.timestamp);
+    		//res.json({pong:Globals.uuid, timestamp:monument.utc().unix()});		
+            crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().valueOf()}, res);
+        } else {
+            console.log(data);
+            res.sendStatus(400);
+        }
+    });
 }
 
 exports.startBeat = function(cron, master) {
@@ -38,13 +40,18 @@ exports.stopBeat = function() {
 }
 
 exports.getLatencies = function(req, res) {
-    res.json(latencies);
+    crypt.sendCryptJSON(latencies, res);
 }
 
 function sendHeartBeatRequest(host) {
-    var time = monument.utc().unix();
-	request.post(host + '/heartbeat',
-	    { json: { ping:Globals.uuid, timestamp:time } },
+    var time = monument.utc().valueOf();
+    crypt.encryptJSON({ ping:Globals.uuid, timestamp:time }, function(data) {
+        request.post(
+            {
+                url: host + '/heartbeat',
+                body: data,
+                headers: {'Content-Type': 'text/html'}
+            },
 	    function (error, response, body) {
 	        if (!error && response.statusCode == 200) {
 	            //console.log('Pong: ' + body);

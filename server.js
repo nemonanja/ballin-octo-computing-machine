@@ -83,7 +83,7 @@ app.post('/ipnotify', function(req, res) {
 	}
 });
 
-app.post('/heartbeat', jsonParser, heartbeat.isAlive);
+app.post('/heartbeat', textParser, heartbeat.isAlive);
 app.get('/heartbeat/latencies', heartbeat.getLatencies);
 
 // start listening
