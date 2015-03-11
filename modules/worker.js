@@ -72,11 +72,11 @@ exports.callnodes = function(ip, callback){
             	},
             	function(error, response, body){
 		    		if (error){
-		    			index +=
+		    			index += 1
 		    			console.log(response.headers.host)
 		    			result.append({"ip": response.headers.host, "response": {}})
 		    		}else{
-		    			index +=
+		    			index += 1
 		    			if (response.statusCode == 200 && jsonCheck(body, ["traceroute", "ping"])) {
 		    				crypt.decryptJSON(req.body, function(data){
 		    					result.append({"ip": response.headers.host, "response": data})
