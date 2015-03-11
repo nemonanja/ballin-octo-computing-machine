@@ -24,17 +24,18 @@ exports.isAlive = function(req, res){
 }
 
 exports.startBeat = function(cron, master, callback) {
+    console.log(callback);
     if(task === null) {
         failback = callback;
     	task = schedule.scheduleJob(cron, function() {
         	//console.log('Ping: ' + master);
             sendHeartBeatRequest(master);
     	});
-        console.log('Scheduled heartbeat task');
+        console.log('Scheduled heartbeat task ' + failback);
     }
 }
 
-exports.stopBeat = function() {
+var stopBeat = function() {
     if(!(task === null)) {
         task.cancel();
         task = null;
@@ -82,11 +83,12 @@ var sendHeartBeatRequest = function(host, callback) {
 
 function pingTimeout() {
     console.log('Ping timed out(' + failed + ')');
-    if(failed >= 3) {
+    if(failed >= 0) {
         stopBeat();
-        if(!(failback === null)) {
-            failback();
-        }
+        //if(failback) {
+            console.log('a',failback);
+            //failback();
+       // }
     } else {
         failed++;
     }
@@ -103,3 +105,4 @@ function jsonCheck(json, checks) {
 }
 
 exports.sendHeartBeatRequest = sendHeartBeatRequest;
+exports.stopBeat = stopBeat;

@@ -115,7 +115,7 @@ var callMaster = function(callback) {
 
 // Start heartbeat
 var startHearbeat = function() {	
-	heartbeat.startBeat('*/1 * * * *', 'http://'+config.dns.url+':'+config.port, newMasterSearch());
+	heartbeat.startBeat('*/1 * * * *', 'http://'+config.dns.url+':'+config.port, newMasterSearch);
 };
 
 // Generate uuid
@@ -178,6 +178,7 @@ var newMasterSearch = function() {
 
 	for (var key in globals.ip_list) {
 		heartbeat.sendHeartBeatRequest(globals.ip_list, function(data) {
+			console.log('lol pinged:', data);
 			pingList[key] = data;
 			if(pingList.length == ipList.length) {
 				console.log(pingList);
