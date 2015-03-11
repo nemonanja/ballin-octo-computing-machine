@@ -63,29 +63,30 @@ exports.callnodes = function(ip, callback){
 	var result = []
 	var index = 0
 	crypt.encryptJSON({"ip": ip}, function(data){
-		for(var node in ip_list){
+		for(i = 0; i < globals.ip_list.length; i++){
 	    	request.post(
 	    		{
-                	url: ip_list[node] + '/taskcall',
+                	url: "http://" + globals.ip_list[i].ip + ":" + config.port +  '/taskcall',
                 	body: data,
                 	headers: {'Content-Type': 'text/html'}
             	},
             	function(error, response, body){
 		    		if (error){
 		    			index += 1
-		    			console.log(response.headers.host)
-		    			result.append({"ip": response.headers.host, "response": {}})
+		    			result.push({})
 		    		}else{
 		    			index += 1
-		    			if (response.statusCode == 200 && jsonCheck(body, ["traceroute", "ping"])) {
-		    				crypt.decryptJSON(req.body, function(data){
-		    					result.append({"ip": response.headers.host, "response": data})
+		    			if (response.statusCode == 200) {
+		    				crypt.decryptJSON(body, function(data){
+		    					if(jsonCheck(data, ["traceroute", "ping"])){
+		    						result.push(data)
+		    					}
 		    				})
-		                		
 			        	}
 		    		}
 
-		    		if (index == ip_list.length){
+		    		if (index == globals.ip_list.length){
+
 		    			callback(result)
 		    		}
 
