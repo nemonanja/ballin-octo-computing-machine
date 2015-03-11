@@ -74,14 +74,14 @@ exports.callnodes = function(ip, callback){
 		    		if (error){
 		    			index += 1
 		    			console.log(response.headers.host)
-		    			result.append({"ip": response.headers.host, "response": {}})
+		    			result.push({"ip": response.headers.host, "response": {}})
 		    		}else{
 		    			index += 1
 		    			if (response.statusCode == 200) {
 		    				crypt.decryptJSON(body, function(data){
 		    					console.log("VAGINA: " + data)
 		    					if(jsonCheck(data, ["traceroute", "ping"])){
-		    						result.append({"ip": response.headers.host, "response": data})
+		    						result.push({"ip": response.headers.host, "response": data})
 		    					}
 		    				})
 			        	}
