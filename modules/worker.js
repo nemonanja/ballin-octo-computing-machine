@@ -77,13 +77,13 @@ exports.callnodes = function(ip, callback){
 		    			result.append({"ip": response.headers.host, "response": {}})
 		    		}else{
 		    			index += 1
-		    			if (response.statusCode == 200 && jsonCheck(body, ["traceroute", "ping"])) {
+		    			if (response.statusCode == 200) {
 		    				crypt.decryptJSON(req.body, function(data){
-		    					console.log("HERMANNI")
-		    					console.log(data)
-		    					result.append({"ip": response.headers.host, "response": data})
+		    					console.log("VAGINA: " + data)
+		    					if(jsonCheck(data, ["traceroute", "ping"])){
+		    						result.append({"ip": response.headers.host, "response": data})
+		    					}
 		    				})
-		                		
 			        	}
 		    		}
 
