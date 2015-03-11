@@ -4,6 +4,8 @@ var request = require('request');
 
 var task = null;
 var latencies = {};
+var failed = 0;
+var failback = null;
 
 exports.isAlive = function(req, res){
     crypt.decryptJSON(req.body, function(data) {
@@ -21,8 +23,9 @@ exports.isAlive = function(req, res){
     });
 }
 
-exports.startBeat = function(cron, master) {
+exports.startBeat = function(cron, master, callback) {
     if(task === null) {
+        failback = callback;
     	task = schedule.scheduleJob(cron, function() {
         	//console.log('Ping: ' + master);
             sendHeartBeatRequest(master);
@@ -54,6 +57,7 @@ function sendHeartBeatRequest(host) {
             },
     	    function (error, response, body) {
     	        if (!error && response.statusCode == 200) {    	            
+                    failed = 0;
                     crypt.decryptJSON(body, function(data) {
                         if(jsonCheck(data, ["pong", "timestamp"])) {
                             console.log('Pong from: ' + data.pong + ' ' + data.timestamp);
@@ -63,12 +67,23 @@ function sendHeartBeatRequest(host) {
                         }
                     });
     	        } else {
-                    console.log('Ewwwror: ' + error);
-                }
-                //console.log(response.statusCode);
+                    pingTimeout();
+                }                
     	    }
         );
 	});
+}
+
+function pingTimeout() {
+    console.log('Ping timed out(' + failed + ')');
+    if(failed >= 3) {
+        stopBeat();
+        if(!(failback === null)) {
+            failback();
+        }
+    } else {
+        failed++;
+    }
 }
 
 function jsonCheck(json, checks) {
