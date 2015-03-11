@@ -160,11 +160,12 @@ var notify = function(ipList, uuid) {
 
 // Ask if we need new master
 var askOthers = function() {
-	console.log('Asking all nodes if they see master');
 	var pingList = [];
 	var ipList = globals.ip_list.slice();
+	console.log('Asking all nodes if they see master:', ipList);
 	for (var i=0; i<ipList.length; i++) {
 		crypt.encryptJSON({ check: true }, function(data) {
+			console.log('istheremaster to: http://'+ipList[i].ip+':'+config.port + '/istheremaster');
 	        request.post(
 	            {
 	                url: 'http://'+ipList[i].ip+':'+config.port + '/istheremaster',

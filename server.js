@@ -66,7 +66,7 @@ app.post('/register', textParser, function(req, res) {
 // IP list changed
 app.post('/ipnotify', function(req, res) {
 	console.log('ipnotify called');
-	if(!globals.is_master && req.query && req.query.data){
+	if(globals.ready && !globals.is_master && req.query && req.query.data){
 		crypt.decryptJSON(req.query.data, function(data) {
 			if(data.ip_list) {
 				console.log('new ip list:', data);
@@ -84,28 +84,16 @@ app.post('/ipnotify', function(req, res) {
 });
 
 //nemo vitun homo jäbä kutsuu tätä :DDD
-app.post('/removekebabnemo', jsonParser, function(req, res){
+app.post('/removekebabnemo', bodyParser, function(req, res){
 	worker.callnodes(req.body.ip, function(result){
-		worker.traceroute(req.body.ip, 64, function(error, trace){
-			if (error){
-				console.log(error.toString())
-				res.json(result)
-			}else{
-				worker.ping(req.body.ip, function (error, time) {
-					if (error){
-						res.json(result)
-						console.log (target + ": " + error.toString ());
-					}else{
-    					result.push({"uuid": globals.uuid, "traceroute": trace, "ping": time})
-    					res.json(result)
-					}
-				})
-			}
-		})
+		console.log("SPERMAMAISTERI: " + req.body.ip)
+		res.json(result)
 	})
 })
 
+// Do task
 app.post('/taskcall', textParser, function(req,res){
+	console.log('taskcall called');
 	var pingres
 	var tracertres
 	crypt.decryptJSON(req.body, function(data){
@@ -121,14 +109,48 @@ app.post('/taskcall', textParser, function(req,res){
 						crypt.sendCryptJSON({}, res)
 					}else{
 						pingres = time
-						crypt.sendCryptJSON({"uuid": globals.uuid, "traceroute" : tracertres, "ping": pingres}, res)
-		    		}
+						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres}, res)
+		    			console.log("Time: " + time)
+					}
 				})
 			}
 		})
 	})
 });
 
+// Check is master alive
+app.post('/istheremaster', textParser, function(req,res){
+	console.log('istheremaster called');
+	crypt.decryptJSON(req.body, function(data){
+		if(globals.ready && data.check) {
+			distributed.pingMaster(function(status) {
+				crypt.sendCryptJSON({state: state}, res);
+			});
+		}
+	})
+});
+
+// Start looking new master
+app.post('/searchnewmaster', textParser, function(req,res){
+	console.log('searchnewmaster called');
+	crypt.decryptJSON(req.body, function(data){
+		if(globals.ready && data.startSearch) {
+			distributed.newMasterSearch();
+		}
+	})
+});
+
+// Start looking new master
+app.post('/bemaster', textParser, function(req,res){
+	console.log('bemaster called');
+	crypt.decryptJSON(req.body, function(data){
+		if(globals.ready && data.beMaster) {
+			distributed.takeOver();
+		}
+	})
+});
+
+// Heartbeat routes
 app.post('/heartbeat', textParser, heartbeat.isAlive);
 app.get('/heartbeat/latencies', heartbeat.getLatencies);
 
