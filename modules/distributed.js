@@ -198,7 +198,7 @@ var askOthers = function() {
 							}
 
 							// More than half of nodes can't connect master --> start new master selection
-							if((count/2)>(ipList.length-1)) {
+							if((count/2)>=(ipList.length-1)) {
 								notifySelectionStart();
 								newMasterSearch();
 							// More than half of nodes can connect to master --> go to init loop
