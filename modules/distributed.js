@@ -34,12 +34,6 @@ var initialize = function(callback) {
 				var now = moment().valueOf();
 				var then = moment(data.lastUpdate).utc('-0700').valueOf()+25200000;
 				var elapsed = now - then;
-
-
-				console.log(now);
-				console.log(then);
-				console.log(elapsed);
-
 				// DNS updated more than 2 minutes ago but no response,
 				if(elapsed==null || elapsed>60000) {
 					console.log('Updated over 1 min ago --> taking master');
