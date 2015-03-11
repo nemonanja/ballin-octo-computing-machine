@@ -29,10 +29,19 @@ var initialize = function(callback) {
 			// Get DNS and ip info
 			dns.getDNSinfo(function(data) {
 				// Time passed from last update
-				var elapsed = moment().utc().unix() - moment(data.lastUpdate).utc().unix();
+				console.log(moment().format());
+				console.log(data.lastUpdate);
+				var now = moment().valueOf();
+				var then = moment(data.lastUpdate).utc('-0700').valueOf()+25200000;
+				var elapsed = now - then;
+
+
+				console.log(now);
+				console.log(then);
 				console.log(elapsed);
+
 				// DNS updated more than 2 minutes ago but no response,
-				if(elapsed==null || elapsed>60000) {
+				if(elapsed==null || elapsed>60) {
 					// Try to take domain
 					dns.updateIP(function(updateData) {
 						// Error updating domain
