@@ -79,6 +79,8 @@ exports.callnodes = function(ip, callback){
 		    			index += 1
 		    			if (response.statusCode == 200 && jsonCheck(body, ["traceroute", "ping"])) {
 		    				crypt.decryptJSON(req.body, function(data){
+		    					console.log("HERMANNI")
+		    					console.log(data)
 		    					result.append({"ip": response.headers.host, "response": data})
 		    				})
 		                		
@@ -86,7 +88,7 @@ exports.callnodes = function(ip, callback){
 		    		}
 
 		    		if (index == globals.ip_list.length){
-		    			
+
 		    			callback(result)
 		    		}
 
