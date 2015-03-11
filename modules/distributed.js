@@ -35,7 +35,7 @@ var initialize = function(callback) {
 				var then = moment(data.lastUpdate).utc('-0700').valueOf()+25200000;
 				var elapsed = now - then;
 				// DNS updated more than 2 minutes ago but no response,
-				if(elapsed==null || elapsed>60000) {
+				if(elapsed==null || elapsed>10000) { //60000
 					console.log('Updated over 1 min ago --> taking master');
 					// Try to take domain
 					dns.updateIP(function(updateData) {
@@ -176,8 +176,8 @@ var newMasterSearch = function() {
 	var pingList = {};
 	var ipList = globals.ip_list;
 
-	for (var key in globals.ip_list) {
-		heartbeat.sendHeartBeatRequest(globals.ip_list, function(data) {
+	for (var key in ipList) {
+		heartbeat.sendHeartBeatRequest('http://'+ipList[key]+':'+config.port, function(data) {
 			console.log('lol pinged:', data);
 			pingList[key] = data;
 			if(pingList.length == ipList.length) {
