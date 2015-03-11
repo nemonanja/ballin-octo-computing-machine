@@ -63,10 +63,10 @@ exports.callnodes = function(ip, callback){
 	var result = []
 	var index = 0
 	crypt.encryptJSON({"ip": ip}, function(data){
-		for(var node in ip_list){
+		for(i = 0; i < globals.ip_list.length; i++){
 	    	request.post(
 	    		{
-                	url: ip_list[node] + '/taskcall',
+                	url: "http://" + globals.ip_list[i].ip + ":" + config.port +  '/taskcall',
                 	body: data,
                 	headers: {'Content-Type': 'text/html'}
             	},
@@ -85,7 +85,7 @@ exports.callnodes = function(ip, callback){
 			        	}
 		    		}
 
-		    		if (index == ip_list.length){
+		    		if (index == Globals.ip_list.length){
 		    			callback(result)
 		    		}
 

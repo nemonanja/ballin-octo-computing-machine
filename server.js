@@ -1,8 +1,8 @@
 // Global variables
-var globals = require('./globals');
+globals = require('./globals');
 
 // Static configs
-var config = require('./config.json');
+config = require('./config.json');
 
 // Local modules
 var distributed = require('./modules/distributed.js');
