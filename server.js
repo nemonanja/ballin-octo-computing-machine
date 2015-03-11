@@ -86,6 +86,7 @@ app.post('/ipnotify', function(req, res) {
 //nemo vitun homo jäbä kutsuu tätä :DDD
 app.post('/removekebabnemo', bodyParser, function(req, res){
 	worker.callnodes(req.body.ip, function(result){
+		console.log("SPERMAMAISTERI: " + req.body.ip)
 		res.json(result)
 	})
 })
