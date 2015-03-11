@@ -122,13 +122,17 @@ app.post('/taskcall', textParser, function(req,res){
 app.post('/istheremaster', textParser, function(req,res){
 	console.log('istheremaster called');
 	crypt.decryptJSON(req.body, function(data){
-		if(globals.ready && data.check && !globals.ongoing) {
-			globals.ongoing = true;
-			distributed.pingMaster(function(state) {
-				crypt.sendCryptJSON({state: state}, res);
-			});
+		if(globals.ready && data.check) {
+			if(globals.ongoing) {
+				crypt.sendCryptJSON({ongoing: true}, res);
+			} else {
+				globals.ongoing = true;
+				distributed.pingMaster(function(state) {
+					crypt.sendCryptJSON({state: state, ongoing: false}, res);
+				});
+			}
 		}
-	})
+	});
 });
 
 // Start looking new master

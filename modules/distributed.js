@@ -164,6 +164,7 @@ var askOthers = function() {
 	var ipList = globals.ip_list.slice();
 	console.log('Asking all nodes if they see master:', ipList);
 	globals.ongoing = true;
+	var quit = false;
 	for (var i=0; i<ipList.length; i++) {
 		if(!(ipList[i].uuid===globals.uuid)) {
 			crypt.encryptJSON({ check: true }, function(data) {
@@ -175,38 +176,45 @@ var askOthers = function() {
 		                headers: {'Content-Type': 'text/html'}
 		            },
 		    	    function (error, response, body) {
-		    	        if (!error && response.statusCode == 200) {    	            
-		                    crypt.decryptJSON(body, function(data) {
-		                        if(data.state){
-		                        	pingList.push(true)
-		                        } else {
-		                        	pingList.push(false)
-		                        }
-		                    });
-		    	        } else {
-	                    	pingList.push(false)
-		                }
+		    	    	if(!quit) {
+			    	        if (!error && response.statusCode == 200) {    	            
+			                    crypt.decryptJSON(body, function(data) {
+			                    	if(!data.ongoing) {
+				                        if(data.state){
+				                        	pingList.push(true)
+				                        } else {
+				                        	pingList.push(false)
+				                        }
+				                    } else {
+				                    	quit = true;
+				                    	initLoop();
+				                    }
+			                    });
+			    	        } else {
+		                    	pingList.push(false)
+			                }
 
-		                // Got all responses
-		                if(pingList.length==(ipList.length-1)) {
-		                	var count = 0;
-		                	// Count response states
-							for (var i=0; i<pingList.length; i++) {
-								if(!pingList[i]) {
-									count += 1;
+			                // Got all responses
+			                if((pingList.length==(ipList.length-1)) && !quit) {
+			                	var count = 0;
+			                	// Count response states
+								for (var i=0; i<pingList.length; i++) {
+									if(!pingList[i]) {
+										count += 1;
+									}
 								}
-							}
 
-							// More than half of nodes can't connect master --> start new master selection
-							if((count/2)>=(ipList.length-1)) {
-								notifySelectionStart();
-								newMasterSearch();
-							// More than half of nodes can connect to master --> go to init loop
-							} else {
-								globals.ready = false;
-								initLoop();
-							}
-		                }               
+								// More than half of nodes can't connect master --> start new master selection
+								if((count/2)>=(ipList.length-1)) {
+									notifySelectionStart();
+									newMasterSearch();
+								// More than half of nodes can connect to master --> go to init loop
+								} else {
+									globals.ready = false;
+									initLoop();
+								}
+			                } 
+		                }            
 		    	    }
 		        );
 			});
