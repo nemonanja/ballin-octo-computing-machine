@@ -6,7 +6,8 @@ var config = require('./config.json');
 
 // Local modules
 var distributed = require('./modules/distributed.js');
-var crypt = require('./modules/cryptography.js');
+crypt = require('./modules/cryptography.js');
+var heartbeat = require('./modules/heartbeat.js');
 var worker = require('./modules/worker.js');
 
 // External modules
@@ -14,6 +15,14 @@ var express  = require('express');
 
 // Config express
 var app = express();
+
+var bodyParser = require('body-parser');
+var jsonParser = bodyParser.json();
+var textParser = bodyParser.text({type: 'text/html'});
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
 
 var pub = __dirname + '/public',
 	view = __dirname + '/views';
@@ -30,10 +39,10 @@ app.use(express.static(view));
 // ======
 
 // Register new node
-app.get('/register', function(req, res) {
+app.post('/register', textParser, function(req, res) {
 	console.log('register called');
-	if(globals.is_master && req.query && req.query.data){
-		crypt.decryptJSON(req.query.data, function(data) {
+	if(globals.is_master && req.body){
+		crypt.decryptJSON(req.body, function(data) {
 			var clientIp = req.ip;
 			var uuid = data.uuid;
 			// Give ip and uuid to list handler
@@ -74,6 +83,7 @@ app.post('/ipnotify', function(req, res) {
 	}
 });
 
+
 app.post('/taskcall', function(req,res){
 	var pingres
 	var tracertres
@@ -97,6 +107,9 @@ app.post('/taskcall', function(req,res){
 		}
 	})
 });
+
+app.post('/heartbeat', textParser, heartbeat.isAlive);
+app.get('/heartbeat/latencies', heartbeat.getLatencies);
 
 // start listening
 app.listen(config.port);
