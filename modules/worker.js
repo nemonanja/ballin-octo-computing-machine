@@ -60,14 +60,39 @@ function TimeExceededError (source) {
 
 
 exports.callnodes = function(ip, callback){
-	for(var node in ip_list){
-    	request.post(ip_list[node] + '/taskcall', {json: {"ip": ip}}, function(error, response, body){
-    		if (!error && response.statusCode == 200 && jsonCheck(body, ["traceroute", "ping"])) {
-                
-	        }
+	var result = []
+	var index = 0
+	crypt.encryptJSON({"ip": ip}, function(data){
+		for(var node in ip_list){
+	    	request.post(
+	    		{
+                	url: ip_list[node] + '/taskcall',
+                	body: data,
+                	headers: {'Content-Type': 'text/html'}
+            	},
+            	function(error, response, body){
+		    		if (error){
+		    			index +=
+		    			console.log(response.headers.host)
+		    			result.append({"ip": response.headers.host, "response": {}})
+		    		}else{
+		    			index +=
+		    			if (response.statusCode == 200 && jsonCheck(body, ["traceroute", "ping"])) {
+		    				crypt.decryptJSON(req.body, function(data){
+		    					result.append({"ip": response.headers.host, "response": data})
+		    				})
+		                		
+			        	}
+		    		}
 
-    	})
-	}
+		    		if (index == ip_list.length){
+		    			callback(result)
+		    		}
+
+	    	})
+		}
+	})
+	
 
 
 }

@@ -84,27 +84,28 @@ app.post('/ipnotify', function(req, res) {
 });
 
 
-app.post('/taskcall', function(req,res){
+app.post('/taskcall', textParser, function(req,res){
 	var pingres
 	var tracertres
-
-	worker.traceroute("8.8.8.8", 64, function(error, results){
-		if (error){
-			res.json({})
-			console.log(error.toString())
-		}else{
-			tracertres = results
-			worker.ping("8.8.8.8", function (error, time) {
-				if (error){
-					console.log (target + ": " + error.toString ());
-					res.json({})
-				}else{
-					pingres = time
-					res.json({"traceroute" : tracertres, "ping": pingres})
-	    			console.log("Time: " + time)
-				}
-			})
-		}
+	crypt.decryptJSON(req.body, function(data){
+		worker.traceroute(data.ip, 64, function(error, results){
+			if (error){
+				res.json({}, res)
+				console.log(error.toString())
+			}else{
+				tracertres = results
+				worker.ping(data.ip, function (error, time) {
+					if (error){
+						console.log (target + ": " + error.toString ());
+						crypt.sendCryptJSON({}, res)
+					}else{
+						pingres = time
+						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres}, res)
+		    			console.log("Time: " + time)
+					}
+				})
+			}
+		})
 	})
 });
 
