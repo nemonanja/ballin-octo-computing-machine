@@ -4,7 +4,6 @@ var globals = require('../globals.js');
 var config = require('../config.json');
 var heartbeat = require('./modules/heartbeat.js');
 var dns = require('./dns.js');
-//var heartbeat = require('./modules/heartbeat.js');
 
 var request = require('request').defaults({jar: true});
 var moment = require('moment');
@@ -122,7 +121,7 @@ var callMaster = function(callback) {
 
 // Start heartbeat
 var startHearbeat = function() {	
-	heartbeat.startBeat('*/1 * * * *', 'http://asmgod.noip.me:3000');
+	heartbeat.startBeat('*/1 * * * *', 'http://'+config.dns.url+':'+config.port, newMasterSearch());
 };
 
 // Generate uuid
@@ -177,6 +176,21 @@ var notify = function(ipList, uuid) {
 			});
 		}
 	}
+};
+
+var newMasterSearch = function() {
+	var pingList = {};
+	var ipList = globals.ip_list;
+
+	for (var key in globals.ip_list) {
+		heartbeat.sendHeartBeatRequest(globals.ip_list, function(data) {
+			pingList[key] = data;
+			if(pingList.length == ipList.length) {
+				console.log(pingList);
+			}
+		});
+	}
+
 };
 
 

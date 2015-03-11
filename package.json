@@ -1,18 +1,19 @@
 {
-	"name": "ballin-octo-computing-machine",
-	"description": "Ebin distributed traceroute mapper",
-	"version": "0.0.1",
-	"main": "server.js",
-	"dependencies": {
-		"express"		: "4.12.0",
-		"cheerio"		: "0.18.0",
-		"request"		: "2.53.0",
-		"crypto"		: "0.0.3",
-		"moment"		: "2.9.0",
-		"node-schedule" : "0.2.3",
-		"body-parser"	: "1.12.0"
-	},
-	"licenses": {
-		"type": "MIT"
-	}
+  "name": "ballin-octo-computing-machine",
+  "description": "Ebin distributed traceroute mapper",
+  "version": "0.0.1",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "1.12.0",
+    "cheerio": "0.18.0",
+    "crypto": "0.0.3",
+    "express": "4.12.0",
+    "moment": "2.9.0",
+    "net-ping": "^1.1.11",
+    "node-schedule": "0.2.3",
+    "request": "2.53.0"
+  },
+  "licenses": {
+    "type": "MIT"
+  }
 }

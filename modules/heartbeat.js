@@ -46,7 +46,7 @@ exports.getLatencies = function(req, res) {
     crypt.sendCryptJSON(latencies, res);
 }
 
-function sendHeartBeatRequest(host) {
+exports.sendHeartBeatRequest = function(host) {
     var time = monument.utc().valueOf();
     crypt.encryptJSON({ ping:Globals.uuid, timestamp:time }, function(data) {
         request.post(
