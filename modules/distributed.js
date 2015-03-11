@@ -168,25 +168,31 @@ var notify = function(ipList, uuid) {
 						if(error) {
 							console.log(error);
 						}
-					});
-			});
+					});ä
 		}
 	}
 };
 
+// Ask if we need new master
+var askNewMaster = function() {
+	console.log('Asking all nodes if they see master');
+	for (var i=0; i<ipList.length; i++) {
+		console.log('asd')
+	}
+
+};
+
+// find best node
 var newMasterSearch = function() {
 	var pingList = [];
 	var ipList = globals.ip_list.slice();
-	console.log('lololo',ipList);
+	console.log('Finding best node');
 	for (var i=0; i<ipList.length; i++) {
 		console.log('pipipi:', 'http://'+ipList[i].ip+':'+config.port);
 		heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(latency, uuid) {
-			console.log('lol pinged:', data);
-			pingList.push({uuid: uuid, latency:latency);
-			console.log('asd:', pingList.length, ipList.length)
-
+			pingList.push({uuid: uuid, latency:latency});
 			if(pingList.length == ipList.length) {
-				console.log('list',pingList);
+				console.log('Pinglist:',pingList);
 			}
 		});
 	}
