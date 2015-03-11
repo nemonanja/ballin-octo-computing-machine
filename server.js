@@ -114,7 +114,7 @@ app.post('/taskcall', textParser, function(req,res){
 						console.log("NEkru5 :D")
 						pingres = time
 						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres}, res)
-		    			console.log("Time: " + time)
+		    			console.log("Timegay: " + time)
 					}
 				})
 			}
