@@ -2,7 +2,7 @@
 
 var globals = require('../globals.js');
 var config = require('../config.json');
-var heartbeat = require('./modules/heartbeat.js');
+var heartbeat = require('./heartbeat.js');
 var dns = require('./dns.js');
 //var heartbeat = require('./modules/heartbeat.js');
 
