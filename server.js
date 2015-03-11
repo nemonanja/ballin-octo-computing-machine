@@ -30,7 +30,7 @@ app.use(express.static(view));
 // ======
 
 // Register new node
-app.get('/register', function(req, res) {
+app.post('/register', function(req, res) {
 	console.log('register called');
 	if(globals.is_master && req.query && req.query.data){
 		crypt.decryptJSON(req.query.data, function(data) {

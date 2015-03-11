@@ -82,9 +82,11 @@ var initLoop = function() {
 
 var callMaster = function(callback) {
 	crypt.encryptJSON({uuid: globals.uuid}, function(data) {
-		request.get(
-			registerUrl,
-			{qs: {'data': data}},
+		request.post(
+			{
+				url: registerUrl,
+				body: data
+			},
 			function (error, response, body) {
 				if (!error && response.statusCode == 200) {
 					crypt.decryptJSON(body, function(data) {
