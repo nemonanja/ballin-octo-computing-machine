@@ -165,7 +165,6 @@ var askOthers = function() {
 		var ipList = globals.ip_list.slice();
 		console.log('Asking all nodes if they see master:', ipList);
 		globals.ongoing = true;
-		var quit = false;
 		for (var i=0; i<ipList.length; i++) {
 			if(!(ipList[i].uuid===globals.uuid)) {
 				crypt.encryptJSON({ check: true }, function(data) {
@@ -177,45 +176,34 @@ var askOthers = function() {
 			                headers: {'Content-Type': 'text/html'}
 			            },
 			    	    function (error, response, body) {
-			    	    	if(!quit) {
-				    	        if (!error && response.statusCode == 200) {    	            
-				                    crypt.decryptJSON(body, function(data) {
-				                    	if(!data.ongoing) {
-					                        if(data.state){
-					                        	pingList.push(true)
-					                        } else {
-					                        	pingList.push(false)
-					                        }
-					                    } else {
-					                    	quit = true;
-					                    	initLoop();
-					                    }
-				                    });
-				    	        } else {
-			                    	pingList.push(false)
-				                }
+			    	        if (!error && response.statusCode == 200) {    	            
+			                    crypt.decryptJSON(body, function(data) {
+		                        	pingList.push(data.ongoing);
+			                    });
+			    	        } else {
+		                    	pingList.push(false)
+			                }
 
-				                // Got all responses
-				                if((pingList.length==(ipList.length-1)) && !quit) {
-				                	var count = 0;
-				                	// Count response states
-									for (var i=0; i<pingList.length; i++) {
-										if(!pingList[i]) {
-											count += 1;
-										}
+			                // Got all responses
+			                if(pingList.length==(ipList.length-1)) {
+			                	var count = 0;
+			                	// Count response states
+								for (var i=0; i<pingList.length; i++) {
+									if(!pingList[i]) {
+										count += 1;
 									}
-
-									// More than half of nodes can't connect master --> start new master selection
-									if((count/2)>=(ipList.length-1)) {
-										notifySelectionStart();
-										newMasterSearch();
-									// More than half of nodes can connect to master --> go to init loop
-									} else {
-										globals.ready = false;
-										initLoop();
-									}
-				                } 
-			                }            
+								}
+								console.log('Count:', count);
+								// More than half of nodes can't connect master --> start new master selection
+								if((count/2)>=(ipList.length-1)) {
+									notifySelectionStart();
+									newMasterSearch();
+								// More than half of nodes can connect to master --> go to init loop
+								} else {
+									globals.ready = false;
+									initLoop();
+								}
+			                }             
 			    	    }
 			        );
 				});
@@ -229,21 +217,23 @@ var askOthers = function() {
 var notifySelectionStart = function() {
 	console.log('notify selection start: ', ipList)
 	for (var i=0; i<ipList.length; i++) {
-		crypt.encryptJSON({startSearch: true}, function(data) {
-			console.log('Sending start search command to:', ipList[i].uuid);
-			request.post(
-				{
-	                url: 'http://'+ipList[i].ip+':'+config.port+'/searchnewmaster',
-	                body: data,
-	                headers: {'Content-Type': 'text/html'}
-	            },
-				function (error, response, body) {
-					if(error) {
-						console.log(error);
+		if(!(ipList[i].uuid===globals.uuid)) {
+			crypt.encryptJSON({startSearch: true}, function(data) {
+				console.log('Sending start search command to:', ipList[i].uuid);
+				request.post(
+					{
+		                url: 'http://'+ipList[i].ip+':'+config.port+'/searchnewmaster',
+		                body: data,
+		                headers: {'Content-Type': 'text/html'}
+		            },
+					function (error, response, body) {
+						if(error) {
+							console.log(error);
+						}
 					}
-				}
-			);
-		});
+				);
+			});
+		}
 	}
 };
 
@@ -254,26 +244,28 @@ var newMasterSearch = function() {
 	heartbeat.stopBeat();
 	console.log('Finding best node');
 	for (var i=0; i<ipList.length; i++) {
-		console.log('pipipi:', 'http://'+ipList[i].ip+':'+config.port);
-		heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(latency, uuid) {
-			pingList.push({uuid: uuid, latency:latency});
-			if(pingList.length == ipList.length) {
-				console.log('Pinglist:',pingList);
-				// Find lowest ping
-				var ping = 100000000000;
-				var uuid = ""
-				for (var i=0; i<pingList.length; i++) {
-					if(pingList[i].latency<ping){
-						ping = pingList[i].latency;
-						uuid = pingList[i].uuid;
+		if(!(ipList[i].uuid===globals.uuid)) {
+			console.log('pipipi:', 'http://'+ipList[i].ip+':'+config.port);
+			heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(latency, uuid) {
+				pingList.push({uuid: uuid, latency:latency});
+				if(pingList.length == (ipList.length-1)) {
+					console.log('Pinglist:',pingList);
+					// Find lowest ping
+					var ping = 100000000000;
+					var uuid = ""
+					for (var i=0; i<pingList.length; i++) {
+						if(pingList[i].latency<ping){
+							ping = pingList[i].latency;
+							uuid = pingList[i].uuid;
+						}
+					}
+					// Send lowest ping uuid to master call
+					if(uuid.length>0){
+						beMaster(uuid);
 					}
 				}
-				// Send lowest ping uuid to master call
-				if(uuid.length>0){
-					beMaster(uuid);
-				}
-			}
-		});
+			});
+		}
 	}
 
 };
