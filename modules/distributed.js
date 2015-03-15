@@ -6,7 +6,7 @@ var dns = require('./dns.js');
 var request = require('request').defaults({jar: true});
 var moment = require('moment');
 
-var registerUrl = 'http://'+config.dns.url+':'+config.port+'/register';
+var registerUrl = 'http://'+globals.master_ip+':'+config.port+'/register';
 
 // ===================
 //  Public functions 
@@ -14,43 +14,42 @@ var registerUrl = 'http://'+config.dns.url+':'+config.port+'/register';
 
 // Initialize node to distributed system
 var initialize = function(callback) {
-	// Try to connect to master node
-	callMaster(function(response) {
-		// Master found, return response
-		if(response){
-			globals.ready = true;
-			console.log('Master node found');
-			dns.getDNSinfo(function(dnsData) {
-				if(!dnsData) {
-					callback(false);
-				} else {
+	// Get DNS and ip info
+	dns.getDNSinfo(function(dnsData) {
+		if(!dnsData) {
+			callback(false);
+		} else {
+			// Try to connect to master node
+			callMaster(function(response) {
+			// Master found, return response
+				if(response){
+					globals.ready = true;
+					console.log('Master node found');
+
 					globals.master_ip = dnsData.dnsIP;
 					console.log(dnsData);
 					console.log(globals);
 					startHearbeat();
 					callback('slave');
+				// No master found
+				} else {
+					console.log('No master found');
+					// Time passed from last update
+					console.log(moment().format());
+					console.log(data.lastUpdate);
+					var now = moment().valueOf();
+					var then = moment(data.lastUpdate).utc('-0700').valueOf()+25200000;
+					var elapsed = now - then;
+					// DNS updated more than 2 minutes ago but no response,
+					if(elapsed==null || elapsed>10000) { //60000
+						console.log('Updated over 1 min ago --> taking master');
+						takeOver(callback);
+					} else {
+						console.log('Updated under 1 min ago --> wait 1 min');
+						callback(false);
+					}
 				}
 			});
-		// No master found
-		} else {
-			console.log('No master found');
-			// Get DNS and ip info
-			dns.getDNSinfo(function(data) {
-				// Time passed from last update
-				console.log(moment().format());
-				console.log(data.lastUpdate);
-				var now = moment().valueOf();
-				var then = moment(data.lastUpdate).utc('-0700').valueOf()+25200000;
-				var elapsed = now - then;
-				// DNS updated more than 2 minutes ago but no response,
-				if(elapsed==null || elapsed>10000) { //60000
-					console.log('Updated over 1 min ago --> taking master');
-					takeOver(callback);
-				} else {
-					console.log('Updated under 1 min ago --> wait 1 min');
-					callback(false);
-				}
-			});		
 		}
 	});
 };
@@ -108,7 +107,7 @@ var callMaster = function(callback) {
 
 // Start heartbeat
 var startHearbeat = function() {
-	heartbeat.startBeat('*/1 * * * *', 'http://'+config.dns.url+':'+config.port, initLoop);
+	heartbeat.startBeat('*/1 * * * *', 'http://'+globals.master_ip+':'+config.port, initLoop);
 };
 
 // Generate uuid
