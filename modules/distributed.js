@@ -85,7 +85,7 @@ var callMaster = function(callback) {
 			function (error, response, body) {
 				console.log('Register response:', body);
 				if (!error && response.statusCode == 200) {
-					crypt.decryptJSON(body, function(dnsData) {
+					crypt.decryptJSON(body, function(data) {
 						console.log('Register encrypted response:', data);
 						// check that we had valid response
 						if(data!=null && data!=false &&'ip_list' in data) {
