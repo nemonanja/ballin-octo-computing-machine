@@ -198,7 +198,7 @@ var takeOver = function(callback) {
 						initLoop();
 					}
 				});
-			}, 60000) // 1 minute
+			}, 15000) // 15s
 		}
 	});
 }
