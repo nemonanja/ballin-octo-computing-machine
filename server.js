@@ -118,43 +118,6 @@ app.post('/taskcall', textParser, function(req,res){
 	})
 });
 
-// Check is master alive
-app.post('/istheremaster', textParser, function(req,res){
-	console.log('istheremaster called');
-	crypt.decryptJSON(req.body, function(data){
-		if(globals.ready && data.check) {
-			if(globals.ongoing) {
-				crypt.sendCryptJSON({ongoing: true}, res);
-			} else {
-				globals.ongoing = true;
-				distributed.pingMaster(function(state) {
-					crypt.sendCryptJSON({state: state, ongoing: false}, res);
-				});
-			}
-		}
-	});
-});
-
-// Start looking new master
-app.post('/searchnewmaster', textParser, function(req,res){
-	console.log('searchnewmaster called');
-	crypt.decryptJSON(req.body, function(data){
-		if(globals.ready && data.startSearch && globals.ongoing) {
-			distributed.newMasterSearch();
-		}
-	})
-});
-
-// Takeover
-app.post('/bemaster', textParser, function(req,res){
-	console.log('bemaster called');
-	crypt.decryptJSON(req.body, function(data){
-		if(globals.ready && data.beMaster) {
-			distributed.takeOver();
-		}
-	})
-});
-
 // Heartbeat routes
 app.post('/heartbeat', textParser, heartbeat.isAlive);
 app.get('/heartbeat/latencies', heartbeat.getLatencies);

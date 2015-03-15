@@ -3,8 +3,7 @@ Globals = {
   	ip_list		: [],
   	is_master	: false,
   	my_ip		: '',
-  	wait_m_flag : [],
-  	ongoing		: false,
+  	master_ip		: '',
   	ready		: false
 };
 

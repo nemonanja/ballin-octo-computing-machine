@@ -20,8 +20,17 @@ var initialize = function(callback) {
 		if(response){
 			globals.ready = true;
 			console.log('Master node found');
-			startHearbeat();
-			callback('slave');
+			dns.getDNSinfo(function(dnsData) {
+				if(!dnsData) {
+					callback(false);
+				} else {
+					globals.master_ip = dnsData.dnsIP;
+					console.log(dnsData);
+					console.log(globals);
+					startHearbeat();
+					callback('slave');
+				}
+			});
 		// No master found
 		} else {
 			console.log('No master found');
@@ -47,6 +56,7 @@ var initialize = function(callback) {
 };
 
 var initLoop = function() {
+	globals.ready = false;
 	console.log('Starting init loop');
 	setTimeout(function () {
 		initialize(function(status) {
@@ -98,7 +108,7 @@ var callMaster = function(callback) {
 
 // Start heartbeat
 var startHearbeat = function() {
-	heartbeat.startBeat('*/1 * * * *', 'http://'+config.dns.url+':'+config.port, askOthers);
+	heartbeat.startBeat('*/1 * * * *', 'http://'+config.dns.url+':'+config.port, initLoop);
 };
 
 // Generate uuid
@@ -158,168 +168,6 @@ var notify = function(ipList, uuid) {
 	}
 };
 
-// Ask if we need new master
-var askOthers = function() {
-	if(!globals.ongoing) {
-		var pingList = [];
-		var ipList = globals.ip_list.slice();
-		console.log('Asking all nodes if they see master:', ipList);
-		globals.ongoing = true;
-		if(ipList.length==1) {
-			takeOver();
-		} else {
-			for (var i=0; i<ipList.length; i++) {
-				if(!(ipList[i].uuid===globals.uuid)) {
-					crypt.encryptJSON({ check: true }, function(data) {
-						console.log('istheremaster to: http://'+ipList[i].ip+':'+config.port + '/istheremaster');
-				        request.post(
-				            {
-				                url: 'http://'+ipList[i].ip+':'+config.port + '/istheremaster',
-				                body: data,
-				                headers: {'Content-Type': 'text/html'}
-				            },
-				    	    function (error, response, body) {
-				    	        if (!error && response.statusCode == 200) {    	            
-				                    crypt.decryptJSON(body, function(data) {
-			                        	pingList.push(data.state);
-				                    });
-				    	        } else {
-			                    	pingList.push(false)
-				                }
-
-				                // Got all responses
-				                if(pingList.length==(ipList.length-1)) {
-				                	var count = 0;
-				                	// Count response states
-									for (var i=0; i<pingList.length; i++) {
-										if(!pingList[i]) {
-											count += 1;
-										}
-									}
-									console.log('Count:', count);
-									// More than half of nodes can't connect master --> start new master selection
-									if(((count/2)>=(pingList.length)) || (pingList.length==count)) {
-										notifySelectionStart();
-										newMasterSearch();
-									// More than half of nodes can connect to master --> go to init loop
-									} else {
-										globals.ready = false;
-										initLoop();
-									}
-				                }             
-				    	    }
-				        );
-					});
-				}
-			}
-		}
-	}
-
-};
-
-// Tell all slaves to start master selection process
-var notifySelectionStart = function() {
-	var ipList = globals.ip_list.slice();
-	console.log('notify selection start: ', ipList)
-	for (var i=0; i<ipList.length; i++) {
-		if(!(ipList[i].uuid===globals.uuid)) {
-			crypt.encryptJSON({startSearch: true}, function(data) {
-				console.log('Sending start search command to:', ipList[i].uuid);
-				request.post(
-					{
-		                url: 'http://'+ipList[i].ip+':'+config.port+'/searchnewmaster',
-		                body: data,
-		                headers: {'Content-Type': 'text/html'}
-		            },
-					function (error, response, body) {
-						if(error) {
-							console.log(error);
-						}
-					}
-				);
-			});
-		}
-	}
-};
-
-// find best node
-var newMasterSearch = function() {
-	var pingList = [];
-	var ipList = globals.ip_list.slice();
-	heartbeat.stopBeat();
-	console.log('Finding best node');
-	for (var i=0; i<ipList.length; i++) {
-		if(!(ipList[i].uuid===globals.uuid)) {
-			console.log('pipipi:', 'http://'+ipList[i].ip+':'+config.port);
-			heartbeat.sendHeartBeatRequest('http://'+ipList[i].ip+':'+config.port, ipList[i].uuid, function(latency, uuid) {
-				pingList.push({uuid: uuid, latency:latency});
-				if(pingList.length == (ipList.length-1)) {
-					console.log('Pinglist:',pingList);
-					// Find lowest ping
-					var ping = 100000000000;
-					var uuid = ""
-					console.log("Pinglist:", pingList);
-					for (var i=0; i<pingList.length; i++) {
-						if(pingList[i].latency<ping){
-							ping = pingList[i].latency;
-							uuid = pingList[i].uuid;
-						}
-					}
-					// Send lowest ping uuid to master call
-					if(uuid.length>0){
-						beMaster(uuid);
-					}
-				}
-			});
-		}
-	}
-
-};
-
-// Ping master
-var pingMaster = function(callback) {
-	console.log('Ping master:');
-	heartbeat.sendHeartBeatRequest('http://'+config.dns.url+':'+config.port, '', function(latency, uuid) {
-		console.log('Master latency:', latency);
-		if(latency<0){
-			callback(false);
-		} else {
-			callback(true);
-		}
-	});
-};
-
-// Tell selected node to be master
-var beMaster = function(uuid) {
-	var ip = "";
-	for (var i=0; i<globals.ip_list.length; i++) {
-		if(globals.ip_list[i].uuid==uuid){
-			ip = globals.ip_list[i].ip;
-			break;
-		}
-	}
-	if(ip.length>0){
-		crypt.encryptJSON({beMaster: true}, function(data) {
-			console.log('Sending master call to:', ip);
-			request.post(
-				{
-		            url: 'http://'+ip+':'+config.port+'/bemaster',
-		            body: data,
-		            headers: {'Content-Type': 'text/html'}
-		        },
-				function (error, response, body) {
-					if(error) {
-						console.log(error);
-						initLoop();
-					} else {
-						initLoop();
-					}
-				}
-			);
-		});
-	}
-};
-
 // Try to take domain
 var takeOver = function(callback) {
 	globals.ongoing = false;
@@ -357,6 +205,4 @@ exports.initialize = initialize;
 exports.initLoop = initLoop;
 exports.uuid = uuid;
 exports.addSlave = addSlave;
-exports.pingMaster = pingMaster;
-exports.newMasterSearch = newMasterSearch;
 exports.takeOver =takeOver;
