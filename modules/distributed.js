@@ -19,7 +19,7 @@ var initialize = function(callback) {
 		if(!dnsData) {
 			callback(false);
 		} else {
-			registerUrl = 'http://'+globals.master_ip+':'+config.port+'/register';
+			registerUrl = 'http://'+dnsData.dnsIP+':'+config.port+'/register';
 			// Try to connect to master node
 			callMaster(function(response) {
 			// Master found, return response
