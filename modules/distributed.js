@@ -6,7 +6,7 @@ var dns = require('./dns.js');
 var request = require('request').defaults({jar: true});
 var moment = require('moment');
 
-var registerUrl = 'http://'+globals.master_ip+':'+config.port+'/register';
+var registerUrl = '';
 
 // ===================
 //  Public functions 
@@ -19,6 +19,7 @@ var initialize = function(callback) {
 		if(!dnsData) {
 			callback(false);
 		} else {
+			registerUrl = 'http://'+globals.master_ip+':'+config.port+'/register';
 			// Try to connect to master node
 			callMaster(function(response) {
 			// Master found, return response
