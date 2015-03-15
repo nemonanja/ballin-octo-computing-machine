@@ -219,6 +219,7 @@ var askOthers = function() {
 
 // Tell all slaves to start master selection process
 var notifySelectionStart = function() {
+	var ipList = globals.ip_list.slice();
 	console.log('notify selection start: ', ipList)
 	for (var i=0; i<ipList.length; i++) {
 		if(!(ipList[i].uuid===globals.uuid)) {
