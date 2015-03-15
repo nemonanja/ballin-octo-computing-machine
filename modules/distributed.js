@@ -181,7 +181,7 @@ var askOthers = function() {
 				    	    function (error, response, body) {
 				    	        if (!error && response.statusCode == 200) {    	            
 				                    crypt.decryptJSON(body, function(data) {
-			                        	pingList.push(data.ongoing);
+			                        	pingList.push(data.state);
 				                    });
 				    	        } else {
 			                    	pingList.push(false)
@@ -258,6 +258,7 @@ var newMasterSearch = function() {
 					// Find lowest ping
 					var ping = 100000000000;
 					var uuid = ""
+					console.log("Pinglist:", pingList);
 					for (var i=0; i<pingList.length; i++) {
 						if(pingList[i].latency<ping){
 							ping = pingList[i].latency;
