@@ -126,9 +126,8 @@ var addSlave = function(uuid, ip, callback) {
 	// check if uuid is valid
 	if(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
 		var newNode = {uuid: uuid, ip: ip};
-
 		//check if already in list
-		for (var i=0; i++; globals.ip_list.length) {
+		for (var i=0; i<globals.ip_list.length; i++) {
 			if(globals.ip_list[i].uuid===uuid || globals.ip_list[i].ip===ip) {
 				globals.ip_list.splice(i, 1);
 				break;
