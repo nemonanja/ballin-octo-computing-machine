@@ -42,7 +42,7 @@ var initialize = function(callback) {
 					var then = moment(dnsData.lastUpdate).utc('-0700').valueOf()+25200000;
 					var elapsed = now - then;
 					// DNS updated more than 2 minutes ago but no response,
-					if(elapsed==null || elapsed>10000) { //60000
+					if(elapsed==null || elapsed>60000) { //60000
 						console.log('Updated over 1 min ago --> taking master');
 						takeOver(callback);
 					} else {
@@ -178,25 +178,27 @@ var takeOver = function(callback) {
 		// Domain taken succesfully
 		} else {
 			// Douple check that we still have it (for simultaneous reservation)
-			dns.getDNSinfo(function(data) {
-				// Domain is ours
-				if(data.ownIP===data.dnsIP){
-					globals.ready = true;
-					console.log('I am the master');
-					if(callback) {
-						callback('master');
+			setTimeout(function () {
+				dns.getDNSinfo(function(data) {
+					// Domain is ours
+					if(data.ownIP===data.dnsIP){
+						globals.ready = true;
+						console.log('I am the master');
+						if(callback) {
+							callback('master');
+						}
+					// Some other node took domain, let give some to to it initialize itself and try again later
+					} else {
+						console.log('Someone took master');
+						globals.master_ip = data.dnsIP;
+						globals.is_master = false;
+						if(callback) {
+							callback(false);
+						}
+						initLoop();
 					}
-				// Some other node took domain, let give some to to it initialize itself and try again later
-				} else {
-					console.log('Someone took master');
-					globals.master_ip = data.dnsIP;
-					globals.is_master = false;
-					if(callback) {
-						callback(false);
-					}
-					initLoop();
-				}
-			});
+				});
+			}, 60000) // 1 minute
 		}
 	});
 }
