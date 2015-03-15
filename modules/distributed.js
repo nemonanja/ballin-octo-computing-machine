@@ -36,9 +36,9 @@ var initialize = function(callback) {
 					console.log('No master found');
 					// Time passed from last update
 					console.log(moment().format());
-					console.log(data.lastUpdate);
+					console.log(dnsData.lastUpdate);
 					var now = moment().valueOf();
-					var then = moment(data.lastUpdate).utc('-0700').valueOf()+25200000;
+					var then = moment(dnsData.lastUpdate).utc('-0700').valueOf()+25200000;
 					var elapsed = now - then;
 					// DNS updated more than 2 minutes ago but no response,
 					if(elapsed==null || elapsed>10000) { //60000
@@ -85,7 +85,7 @@ var callMaster = function(callback) {
 			function (error, response, body) {
 				console.log('Register response:', body);
 				if (!error && response.statusCode == 200) {
-					crypt.decryptJSON(body, function(data) {
+					crypt.decryptJSON(body, function(dnsData) {
 						console.log('Register encrypted response:', data);
 						// check that we had valid response
 						if(data!=null && data!=false &&'ip_list' in data) {
