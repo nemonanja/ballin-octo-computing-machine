@@ -84,29 +84,16 @@ app.post('/ipnotify', function(req, res) {
 });
 
 //nemo vitun homo jäbä kutsuu tätä :DDD
-app.post('/removekebabnemo', jsonParser, function(req, res){
+app.post('/removekebabnemo', bodyParser, function(req, res){
 	worker.callnodes(req.body.ip, function(result){
-		worker.traceroute(req.body.ip, 64, function(error, trace){
-			if (error){
-				console.log(error.toString())
-				res.json(result)
-			}else{
-				worker.ping(req.body.ip, function (error, time) {
-					if (error){
-						res.json(result)
-						console.log (target + ": " + error.toString ());
-					}else{
-    					result.push({"uuid": globals.uuid, "traceroute": trace, "ping": time})
-    					res.json(result)
-					}
-				})
-			}
-		})
- 	})
+		console.log("SPERMAMAISTERI: " + req.body.ip)
+		res.json(result)
+	})
 })
 
 // Do task
 app.post('/taskcall', textParser, function(req,res){
+	console.log('taskcall called');
 	var pingres
 	var tracertres
 	crypt.decryptJSON(req.body, function(data){
@@ -122,7 +109,8 @@ app.post('/taskcall', textParser, function(req,res){
 						crypt.sendCryptJSON({}, res)
 					}else{
 						pingres = time
-						crypt.sendCryptJSON({"uuid": globals.uuid, "traceroute" : tracertres, "ping": pingres}, res)
+						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres}, res)
+		    			console.log("Time: " + time)
 					}
 				})
 			}

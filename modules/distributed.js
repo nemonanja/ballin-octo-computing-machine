@@ -160,7 +160,7 @@ var notify = function(ipList, uuid) {
 
 // Ask if we need new master
 var askOthers = function() {
-	if(globals.ongoing) {
+	if(!globals.ongoing) {
 		var pingList = [];
 		var ipList = globals.ip_list.slice();
 		console.log('Asking all nodes if they see master:', ipList);
