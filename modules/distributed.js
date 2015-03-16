@@ -155,7 +155,7 @@ var notify = function(ipList, uuid) {
 				console.log('Sending new ip list to:', ipList[i].uuid);
 					request.post(
 					{
-						url: 'http://'+ipList[i].ip+':'+config.port+'/ipnotify',,
+						url: 'http://'+ipList[i].ip+':'+config.port+'/ipnotify',
 						body: data,
 						headers: {'Content-Type': 'text/html'}
 					},
