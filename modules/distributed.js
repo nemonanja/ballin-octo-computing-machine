@@ -153,9 +153,12 @@ var notify = function(ipList, uuid) {
 		if(ipList[i].uuid!=uuid) {
 			crypt.encryptJSON({ip_list: ipList}, function(data) {
 				console.log('Sending new ip list to:', ipList[i].uuid);
-				request.post(
-					'http://'+ipList[i].ip+':'+config.port+'/ipnotify',
-					{qs:{data: data}},
+					request.post(
+					{
+						url: 'http://'+ipList[i].ip+':'+config.port+'/ipnotify',,
+						body: data,
+						headers: {'Content-Type': 'text/html'}
+					},
 					function (error, response, body) {
 						if(error) {
 							console.log(error);

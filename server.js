@@ -66,8 +66,8 @@ app.post('/register', textParser, function(req, res) {
 // IP list changed
 app.post('/ipnotify', function(req, res) {
 	console.log('ipnotify called');
-	if(globals.ready && !globals.is_master && req.query && req.query.data){
-		crypt.decryptJSON(req.query.data, function(data) {
+	if(globals.ready && !globals.is_master && req.body){
+		crypt.decryptJSON(req.body, function(data) {
 			if(data.ip_list) {
 				console.log('new ip list:', data);
 				globals.ip_list = data.ip_list;
