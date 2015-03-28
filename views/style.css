@@ -54,3 +54,18 @@ html, body{
 #searchbar input:focus{
 	box-shadow: 2px 2px 0px 1px #2980b9;
 }
+
+#searchbar button{
+    height: 35px;
+    width: 100px;
+    margin-left: 20px;
+    font-size: 20px;
+    color: #ecf0f1;
+    background-color: dimgrey;
+}
+
+#searchbar button:active {
+     position:relative;
+     top:1px;
+ }
+

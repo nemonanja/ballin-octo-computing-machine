@@ -8,29 +8,16 @@
   <script src="jquery-jvectormap-2.0.2.min.js"></script>
   <script src="http://jvectormap.com/js/jquery-jvectormap-world-mill-en.js"></script>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+  <script src="app.js"></script>
 </head>
 <body>
     <div id="searchbar">
         <div class="wrapper">
             <span>Enter URL or IP address:</span>
-            <input type="text" name="urlip">
+            <input type="text" id="urlip">
+            <button id="btnTrace">Trace</button>
         </div>
     </div>
   <div id="world-map"></div>
-  <script>
-    $(function(){
-      $('#world-map').vectorMap({
-        markers:[{latLng: [41.90, 12.45], name: 'Vatican City'}]
-      });
-
-      var map = $('#world-map').vectorMap('get', 'mapObject');
-
-      map.addMarker("1", [{ latLng: [41.90, 23.45], name: 'Test' }], []);
-      map.addMarker("2", [{ latLng: [41.90, 33.45], name: 'Test' }], []);
-      map.addMarker("3", [{ latLng: [41.90, 27.45], name: 'Test' }], []);
-      map.addMarker("4", [{ latLng: [41.90, 13.45], name: 'Test' }], []);
-
-    });
-  </script>
 </body>
 </html>
