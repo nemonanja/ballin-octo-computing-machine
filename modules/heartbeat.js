@@ -54,7 +54,8 @@ var sendHeartBeatRequest = function(host, uuid, callback) {
             {
                 url: host + '/heartbeat',
                 body: data,
-                headers: {'Content-Type': 'text/html'}
+                headers: {'Content-Type': 'text/html'},
+                timeout: 30000
             },
     	    function (error, response, body) {
     	        if (!error && response.statusCode == 200) {    	            
