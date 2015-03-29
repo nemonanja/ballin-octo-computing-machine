@@ -6,9 +6,16 @@ $(function() {
     });
 
     $("#btnTrace").click(function(){
-        var data = document.getElementById("urlip").value;
-        //minne lähetetään paskaa
-        //ja mitä saapi takasi?
+        var ip = document.getElementById("urlip").value;
+         $.ajax({
+            url: '/removekebabnemo',
+            type: 'post',
+            dataType: 'json',
+            data: {ip:ip},
+            success: function (data) {
+                console.log(data);
+            }
+        });
 
     });
 

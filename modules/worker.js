@@ -1,6 +1,6 @@
 var netping = require("net-ping")
 var request = require('request').defaults({jar: true});
-
+var _this = this;
 
 var options = {
 	retries: 1,
@@ -62,6 +62,30 @@ function TimeExceededError (source) {
 exports.callnodes = function(ip, callback){
 	var result = []
 	var index = 0
+
+	_this.traceroute(ip, 64, function(error, results){
+		if (error){
+			res.json({}, res)
+			console.log(error.toString())
+		}else{
+			var tracertres = results
+			_this.ping(ip, function (error, time) {
+				if (error){
+					console.log (target + ": " + error.toString ());
+				}else{
+					var pingres = time
+					result.push({"traceroute" : tracertres, "ping": pingres})
+	    			console.log("Time: " + time)
+				}
+
+				if(globals.ip_list.length == 0) {
+					callback(result)
+					return;
+				}
+			})
+		}
+	})
+
 	crypt.encryptJSON({"ip": ip}, function(data){
 		for(i = 0; i < globals.ip_list.length; i++){
 	    	request.post(
@@ -86,16 +110,13 @@ exports.callnodes = function(ip, callback){
 		    		}
 
 		    		if (index == globals.ip_list.length){
-
 		    			callback(result)
+		    			return;
 		    		}
 
 	    	})
 		}
 	})
-	
-
-
 }
 
 function jsonCheck(json, checks) {
