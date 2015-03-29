@@ -14,7 +14,9 @@ exports.isAlive = function(req, res){
         if(jsonCheck(data, ["ping", "timestamp"])){
             console.log('Ping from: ' + data.ping + ' ' + data.timestamp);
             pinged[data.ping].timestamp = monument.utc().valueOf();
-            crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().valueOf()}, res);
+            if(Globals.is_master) {
+                crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().valueOf()}, res);
+            }
         } else {
             console.log(data);
             res.sendStatus(400);
