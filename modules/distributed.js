@@ -37,12 +37,12 @@ var initialize = function(callback) {
 					var now = moment().valueOf();
 					var then = moment(dnsData.lastUpdate).utc('-0700').valueOf()+25200000;
 					var elapsed = now - then;
-					// DNS updated more than 2 minutes ago but no response,
+					// DNS updated over minute ago but no response,
 					if(elapsed==null || elapsed>60000) { //60000
 						console.log('Updated over 1 min ago --> taking master');
 						takeOver(callback);
 					} else {
-						console.log('Updated under 1 min ago --> wait 1 min');
+						console.log('Updated under 1 min ago --> go to init loop');
 						callback(false);
 					}
 				}
@@ -53,6 +53,7 @@ var initialize = function(callback) {
 
 var initLoop = function() {
 	globals.ready = false;
+	globals.is_master = false;
 	console.log('Starting init loop');
 	setTimeout(function () {
 		initialize(function(status) {
@@ -181,6 +182,8 @@ var takeOver = function(callback) {
 					// Domain is ours
 					if(data.ownIP===data.dnsIP){
 						globals.ready = true;
+						globals.is_master = true;
+						heartbeat.periodicPingCheck(initLoop);
 						console.log('I am the master');
 						if(callback) {
 							callback('master');
