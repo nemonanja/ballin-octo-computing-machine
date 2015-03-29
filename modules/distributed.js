@@ -8,10 +8,6 @@ var moment = require('moment');
 
 var registerUrl = '';
 
-// ===================
-//  Public functions 
-// ===================
-
 // Initialize node to distributed system
 var initialize = function(callback) {
 	// Get DNS and ip info

@@ -1,12 +1,7 @@
 // Crypto module
 
 var config = require('../config.json');
-
 var crypto = require('crypto');
-
-// ===================
-//  Public functions 
-// ===================
 
 var encrypt = function(text, callback){
 	var cipher = crypto.createCipher(config.crypt.algorithm, config.crypt.password);

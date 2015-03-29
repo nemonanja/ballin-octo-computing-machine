@@ -11,9 +11,6 @@ var password = config.dns.password;
 var loginUrl = 'https://www.noip.com/login';
 var updateUrl = 'https://www.noip.com/members/dns/host.php?host_id='+config.dns.domainID;
 
-// ==================
-//  Public functions 
-// ==================
 
 // IP update function for noip.me dyndns service
 var updateIP = function(callback) {
