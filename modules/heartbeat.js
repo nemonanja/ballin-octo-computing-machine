@@ -6,15 +6,14 @@ var task = null;
 var latencies = {};
 var failed = 0;
 var failback = null;
+var pinged = {};
+var failcount = 0;
 
 exports.isAlive = function(req, res){
     crypt.decryptJSON(req.body, function(data) {
         if(jsonCheck(data, ["ping", "timestamp"])){
-        	//console.log(req.body.ping);
-        	//console.log(monument.unix(req.body.timestamp).format());
-    		//console.log("%s", monument.utc().unix());
             console.log('Ping from: ' + data.ping + ' ' + data.timestamp);
-    		//res.json({pong:Globals.uuid, timestamp:monument.utc().unix()});		
+            pinged[data.ping].timestamp = monument.utc().valueOf();
             crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().valueOf()}, res);
         } else {
             console.log(data);
@@ -82,7 +81,7 @@ var sendHeartBeatRequest = function(host, uuid, callback) {
 
 function pingTimeout() {
     console.log('Ping timed out(' + failed + ')');
-    if(failed >= 0) {
+    if(failed == failcount) {
         stopBeat();
         if(failback) {
             failback();
@@ -102,5 +101,18 @@ function jsonCheck(json, checks) {
     return result;
 }
 
+var periodicPingCheck = function(crawlBack) {
+    schedule.scheduleJob("*/1 * * * *", function() {    
+        for(var node in pinged) {
+            var time = node.timestamp;
+            if(monument.utc().valueOf() - time >= (failcount * 60) + 60) {
+                this.cancel();
+                crawlBack();
+            }
+        }
+    });    
+}
+
 exports.sendHeartBeatRequest = sendHeartBeatRequest;
 exports.stopBeat = stopBeat;
+exports.periodicPingCheck = periodicPingCheck;
