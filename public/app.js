@@ -2,6 +2,8 @@ $(function() {
     markerIndex = 0;
     markerIndex2 = 0;
 
+    var nodeData = [];
+
     $('#world-map').vectorMap({
         markers: []
     });
@@ -16,18 +18,11 @@ $(function() {
 
     var draw = SVG('svgMapOverlay').size($('#svgMapOverlay').width(),$('#svgMapOverlay').height());
     $.get("/getnodes", function(data) {
+        nodeData = data;
         console.log(data);
         for(var i=0; i<data.length; i++) {
             markerIndex +=1;
             map.addMarker(markerIndex, [data[i].geodata.latitude, data[i].geodata.longitude]);
-            var coords1 = map.latLngToPoint(data[i].geodata.latitude,data[i].geodata.longitude);
-            var coords2 = map.latLngToPoint(data[i+1].geodata.latitude,data[i+1].geodata.longitude);
-            draw
-                .path()
-                .attr({ fill: 'none',stroke: '#f213c7', 'stroke-width': 2 })
-                .M(coords1.x, coords1.y)
-                .L(coords2.x, coords2.y);
-
         }
 
     });
@@ -44,12 +39,20 @@ $(function() {
             success: function (data) {
                 console.log(data);
                 for(var i=0; i<data.length; i++) {
+                    var startCoords = map.latLngToPoint(nodeData[data[i].ip].geodata.latitude, nodeData[data[i].ip].geodata.longitude);
+                    var secondCoord = map.latLngToPoint(data[i].traceroute[j].geodata.latitude,data[i].traceroute[j].geodata.longitude);
+                    draw
+                        .path()
+                        .attr({ fill: 'none',stroke: '#f213c7', 'stroke-width': 2 })
+                        .M(startCoords.x, startCoords.y)
+                        .L(secondCoord.x, secondCoord.y);
+
                     for(var j=0; j<data[i].traceroute.length; j++) {
                         if(data[i].traceroute[j].geodata.latitude && data[i].traceroute[j].geodata.longitude) {
-                            //Check when tracerout ends
                             //console.log(data[i].traceroute[j].geodata);
                             markerIndex +=1;
                             map.addMarker(markerIndex, [data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude]);
+                            //Check when tracerout ends
                             if ((data[i].traceroute[j+1].geodata.latitude == 'undefined')){
                                 break;
                             }
