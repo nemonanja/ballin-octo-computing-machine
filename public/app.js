@@ -17,7 +17,8 @@ $(function() {
     var draw = SVG('svgMapOverlay').size($('#svgMapOverlay').width(),$('#svgMapOverlay').height());
 
     $("#btnTrace").click(function(){
-        removeAllMarkers();
+        map.removeAllMarkers();
+        $("#svgMapOverlay").empty();
         var ip = document.getElementById("urlip").value;
          $.ajax({
             url: '/gettraceroute',
@@ -30,7 +31,7 @@ $(function() {
                     for(var j=0; j<data[i].traceroute.length; j++) {
                         if(data[i].traceroute[j].geodata.latitude && data[i].traceroute[j].geodata.longitude) {
                             //Check when tracerout ends
-                            console.log(map.latLngToPoint(data[i].traceroute[j+1].geodata.latitude);
+                            console.log(map.latLngToPoint(data[i].traceroute[j+1].geodata.latitude));
                             if (map.latLngToPoint(data[i].traceroute[j+1].geodata.latitude == 'undefined')){
                                 break;
                             }
