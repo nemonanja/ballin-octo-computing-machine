@@ -67,6 +67,7 @@ app.post('/register', textParser, function(req, res) {
 app.post('/ipnotify', function(req, res) {
 	console.log('ipnotify called');
 	if(globals.ready && !globals.is_master && req.body){
+		console.log("nakki:",req.body);
 		crypt.decryptJSON(req.body, function(data) {
 			if(data.ip_list) {
 				console.log('new ip list:', data);

@@ -174,6 +174,8 @@ var notify = function(ipList, uuid) {
 		if(ipList[i].uuid!=uuid) {
 			crypt.encryptJSON({ip_list: ipList}, function(data) {
 				console.log('Sending new ip list to:', ipList[i].uuid);
+				console.log('Ip list to:', ipList);
+				console.log('Data:', data);
 					request.post(
 					{
 						url: 'http://'+ipList[i].ip+':'+config.port+'/ipnotify',

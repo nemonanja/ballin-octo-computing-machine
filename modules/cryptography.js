@@ -28,6 +28,7 @@ var decryptJSON  = function(json, callback){
 	var decipher = crypto.createDecipher(config.crypt.algorithm, config.crypt.password);
 	var dec = decipher.update(json,'hex','utf8')
 	dec += decipher.final('utf8');
+	console.log("asdasdasd", dec)
 	callback(JSON.parse(dec));
 };
 
