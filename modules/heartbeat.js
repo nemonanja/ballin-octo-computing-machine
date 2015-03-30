@@ -13,6 +13,7 @@ exports.isAlive = function(req, res){
     crypt.decryptJSON(req.body, function(data) {
         if(jsonCheck(data, ["ping", "timestamp"])){
             console.log('Ping from: ' + data.ping + ' ' + data.timestamp);
+            pinged[data.ping] = {};
             pinged[data.ping].timestamp = monument.utc().valueOf();
             if(Globals.is_master) {
                 crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().valueOf()}, res);
