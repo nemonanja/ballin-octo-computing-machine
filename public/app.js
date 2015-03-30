@@ -39,14 +39,18 @@ $(function() {
             success: function (data) {
                 console.log(data);
                 for(var i=0; i<data.length; i++) {
-                    var startCoords = map.latLngToPoint(nodeData[data[i].ip].geodata.latitude, nodeData[data[i].ip].geodata.longitude);
-                    var secondCoord = map.latLngToPoint(data[i].traceroute[j].geodata.latitude,data[i].traceroute[j].geodata.longitude);
-                    draw
-                        .path()
-                        .attr({ fill: 'none',stroke: '#f213c7', 'stroke-width': 2 })
-                        .M(startCoords.x, startCoords.y)
-                        .L(secondCoord.x, secondCoord.y);
-
+                    for (var x= 0; x<nodeData.length; x++)
+                    {
+                        if (nodeData[i].ip == data[i].ip) {
+                            var startCoords = map.latLngToPoint(nodeData[x][data[i].ip].geodata.latitude, nodeData[x][data[i].ip].geodata.longitude);
+                            var secondCoord = map.latLngToPoint(data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude);
+                            draw
+                                .path()
+                                .attr({fill: 'none', stroke: '#f213c7', 'stroke-width': 2})
+                                .M(startCoords.x, startCoords.y)
+                                .L(secondCoord.x, secondCoord.y);
+                        }
+                    }
                     for(var j=0; j<data[i].traceroute.length; j++) {
                         if(data[i].traceroute[j].geodata.latitude && data[i].traceroute[j].geodata.longitude) {
                             //console.log(data[i].traceroute[j].geodata);
