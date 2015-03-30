@@ -64,7 +64,7 @@ app.post('/register', textParser, function(req, res) {
 });
 
 // IP list changed
-app.post('/ipnotify', function(req, res) {
+app.post('/ipnotify', textParser, function(req, res) {
 	console.log('ipnotify called');
 	if(globals.ready && !globals.is_master && req.body){
 		console.log("nakki:",req.body);
