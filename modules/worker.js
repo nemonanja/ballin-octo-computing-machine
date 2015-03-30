@@ -132,13 +132,10 @@ function getGeoData(inData, callback) {
 		if(i+1<inData.length) {
 			limit += inData[i+1].traceroute.length;
 		}
-
 		for(var j = 0; j < inData[i].traceroute.length; j++){
-			console.log("index:", i);
-			iterateSpurdo(inData[i].traceroute[j], function(elem) {
+			getTracert(inData[i].traceroute[j], function(elem) {
 				counter += 1;
 				dataOut.push(elem);
-				console.log(counter, limit);
 				if(counter==limit) {
 					callback(dataOut);
 				}
@@ -147,9 +144,8 @@ function getGeoData(inData, callback) {
 	}
 }
 
-function iterateSpurdo(elem, callback) {
+function getTracert(elem, callback) {
 	satelize.satelize({ip: elem.point, JSONP: true}, function(err, geoData) {
-		console.log('kyrpämaisteri');
 		if(err) {
 			console.log(err)
 		} else {
