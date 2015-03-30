@@ -46,6 +46,7 @@ $(function() {
                 for(var i=0; i<data.length; i++) {
                     for(var j=0; j<data[i].traceroute.length; j++) {
                         if(data[i].traceroute[j].geodata.latitude && data[i].traceroute[j].geodata.longitude) {
+                            //Check when tracerout ends
                             if (map.latLngToPoint(data[i].traceroute[j+1].geodata.latitude == null)){
                                 break;
                             }
