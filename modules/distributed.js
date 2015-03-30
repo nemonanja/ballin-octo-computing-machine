@@ -161,8 +161,7 @@ var updateGeoData = function(ip) {
 					break;
 				}
 			}
-			globals.geo_data[ip] = {}
-			globals.geo_data[ip].geodata = data;
+			globals.geo_data.push({ip: ip, geodata: data});
 			console.log(globals.geo_data);
 		}
 	});

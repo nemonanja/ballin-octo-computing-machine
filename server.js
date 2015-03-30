@@ -96,7 +96,7 @@ app.post('/gettraceroute', jsonParser, function(req, res){
 app.get('/getnodes', jsonParser, function(req, res){
 	console.log('getnodes');
 	console.log(globals.geo_data);
-	res.json( JSON.stringify(globals.geo_data));
+	res.json(globals.geo_data);
 });
 
 // Do task
