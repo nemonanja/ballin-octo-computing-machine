@@ -14,34 +14,26 @@ $(function() {
     $('#svgMapOverlay').width(width);
     $('#svgMapOverlay').height(height);
 
-
     var draw = SVG('svgMapOverlay').size($('#svgMapOverlay').width(),$('#svgMapOverlay').height());
-    
-
-    $.ajax({
-        url: '/getnodes',
-        type: 'get',
-        data: data,
-        success: function (data) {
-            for (var i = 0; i < data.length; i++) {
-                for (var j = 0; j < data[i].traceroute.length; j++) {
-                    markerIndex2 +=1;
-                    map.addMarker(markerIndex, [data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude]);
-                    var coords1 = map.latLngToPoint(data[i].traceroute[j].geodata.latitude,data[i].traceroute[j].geodata.longitude);
-                    var coords2 = map.latLngToPoint(data[i].traceroute[j+1].geodata.latitude,data[i].traceroute[j+1].geodata.longitude);
-                    draw
-                        .path()
-                        .attr({ fill: 'none',stroke: '#f213c7', 'stroke-width': 2 })
-                        .M(coords1.x, coords1.y)
-                        .L(coords2.x, coords2.y);
+    $.get("/getnodes", function(data) {
+        for (var i = 0; i < data.length; i++) {
+            for (var j = 0; j < data[i].traceroute.length; j++) {
+                markerIndex2 +=1;
+                map.addMarker(markerIndex2, [data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude]);
+                if ((data[i].traceroute[j+1].geodata.latitude == 'undefined')){
+                    break;
+                }
+                var coords1 = map.latLngToPoint(data[i].traceroute[j].geodata.latitude,data[i].traceroute[j].geodata.longitude);
+                var coords2 = map.latLngToPoint(data[i].traceroute[j+1].geodata.latitude,data[i].traceroute[j+1].geodata.longitude);
+                draw
+                    .path()
+                    .attr({ fill: 'none',stroke: '#f213c7', 'stroke-width': 2 })
+                    .M(coords1.x, coords1.y)
+                    .L(coords2.x, coords2.y);
                 }
             }
-        }
+
     });
-
-
-
-
 
 
     $("#btnTrace").click(function(){
