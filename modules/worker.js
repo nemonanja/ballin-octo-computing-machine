@@ -66,7 +66,7 @@ function getIP (ip, callback) {
 		callback(ip);
 	} else {
 		console.log('invalid ip');
-		dns.lookup(lookup,function(err,ip) {
+		dns.lookup(ip, function(err,ip) {
 			if(err) {
 				console.log(err);
 				callback(false);
