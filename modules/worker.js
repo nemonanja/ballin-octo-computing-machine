@@ -64,10 +64,10 @@ function TimeExceededError (source) {
 
 function getIP (ip, callback) {
 	if((/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).test(ip)) {
-		console.log('valid ip');
+		console.log('valid ip:', ip);
 		callback(ip);
 	} else {
-		console.log('invalid ip');
+		console.log('invalid ip:', ip);
 		dns.lookup(ip, function(err,ip) {
 			if(err) {
 				console.log(err);
@@ -84,7 +84,7 @@ exports.callnodes = function(ip, callback){
 	var result = []
 	var index = 0
 	getIP(ip, function(ip) {
-		console.log('ip:', ip)
+		console.log('Tracerting ip:', ip)
 		_this.traceroute(ip, 64, function(error, results) {
 			if (error){
 				console.log(error.toString())
@@ -102,6 +102,7 @@ exports.callnodes = function(ip, callback){
 
 					if(globals.ip_list.length == 0) {
 						getGeoData(result, function(data) {
+							console.log("returning one result")
 		    				callback(result);
 							return;
 		    			});
@@ -134,6 +135,7 @@ exports.callnodes = function(ip, callback){
 
 			    		if (index == globals.ip_list.length){
 			    			getGeoData(result, function(data) {
+								console.log("returning all results")
 			    				callback(result);
 			    			});
 			    		}

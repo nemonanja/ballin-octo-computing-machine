@@ -87,7 +87,8 @@ app.post('/ipnotify', function(req, res) {
 app.post('/gettraceroute', jsonParser, function(req, res){
 	console.log('gettraceroute');
 	worker.callnodes(req.body.ip, function(result){
-		res.json(result)
+		console.log(result);
+		res.json(result);
 	})
 })
 
