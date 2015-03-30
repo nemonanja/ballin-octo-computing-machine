@@ -17,6 +17,18 @@ $(function() {
     var draw = SVG('svgMapOverlay').size($('#svgMapOverlay').width(),$('#svgMapOverlay').height());
     $.get("/getnodes", function(data) {
         console.log(data);
+        for(var i=0; i<data.length; i++) {
+            markerIndex +=1;
+            map.addMarker(markerIndex, [data[i].geodata.latitude, data[i].geodata.longitude]);
+            var coords1 = map.latLngToPoint(data[i].geodata.latitude,data[i].geodata.longitude);
+            var coords2 = map.latLngToPoint(data[i+1].geodata.latitude,data[i+1].geodata.longitude);
+            draw
+                .path()
+                .attr({ fill: 'none',stroke: '#f213c7', 'stroke-width': 2 })
+                .M(coords1.x, coords1.y)
+                .L(coords2.x, coords2.y);
+
+        }
 
     });
 
