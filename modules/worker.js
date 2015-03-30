@@ -1,4 +1,5 @@
-var netping = require("net-ping")
+var netping = require("net-ping");
+var dns = require('dns');
 var request = require('request').defaults({jar: true});
 var satelize = require('satelize');
 var _this = this;
@@ -59,68 +60,85 @@ function TimeExceededError (source) {
 	this.source = source;
 }
 
+function getIP (ip, callback) {
+	if((/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).test(ip)) {
+		console.log('valid ip');
+		callback(ip);
+	} else {
+		console.log('invalid ip');
+		dns.lookup(lookup,function(err,ip) {
+			if(err) {
+				console.log(err);
+				callback(false);
+			} else {
+				console.log(ip);
+				callback(ip);
+			}
+		});
+	}
+}
 
 exports.callnodes = function(ip, callback){
 	var result = []
 	var index = 0
+	getIP(ip, function(ip) {
+		console.log('ip:', ip)
+		_this.traceroute(ip, 64, function(error, results) {
+			if (error){
+				console.log(error.toString())
+			}else{
+				var tracertres = results
+				_this.ping(ip, function (error, time) {
+					if (error){
+						console.log (target + ": " + error.toString ());
+					}else{
+						var pingres = time
+						result.push({"traceroute" : tracertres, "ping": pingres})
+		    			console.log("Time: " + time)
+					}
 
-	_this.traceroute(ip, 64, function(error, results){
-		if (error){
-			res.json({}, res)
-			console.log(error.toString())
-		}else{
-			var tracertres = results
-			_this.ping(ip, function (error, time) {
-				if (error){
-					console.log (target + ": " + error.toString ());
-				}else{
-					var pingres = time
-					result.push({"traceroute" : tracertres, "ping": pingres})
-	    			console.log("Time: " + time)
-				}
-
-				if(globals.ip_list.length == 0) {
-					getGeoData(result, function(data) {
-	    				callback(result);
-						return;
-	    			});
-				}
-			})
-		}
-	})
-
-	crypt.encryptJSON({"ip": ip}, function(data){
-		for(i = 0; i < globals.ip_list.length; i++){
-	    	request.post(
-	    		{
-                	url: "http://" + globals.ip_list[i].ip + ":" + config.port +  '/taskcall',
-                	body: data,
-                	headers: {'Content-Type': 'text/html'}
-            	},
-            	function(error, response, body){
-		    		if (error){
-		    			index += 1
-		    			result.push({})
-		    		}else{
-		    			index += 1
-		    			if (response.statusCode == 200) {
-		    				crypt.decryptJSON(body, function(data){
-		    					if(jsonCheck(data, ["traceroute", "ping"])){
-		    						result.push(data)
-		    					}
-		    				})
-			        	}
-		    		}
-
-		    		if (index == globals.ip_list.length){
-		    			getGeoData(result, function(data) {
+					if(globals.ip_list.length == 0) {
+						getGeoData(result, function(data) {
 		    				callback(result);
+							return;
 		    			});
-		    		}
+					}
+				})
+			}
+		})
 
-	    	})
-		}
-	})
+		crypt.encryptJSON({"ip": ip}, function(data){
+			for(i = 0; i < globals.ip_list.length; i++){
+		    	request.post(
+		    		{
+	                	url: "http://" + globals.ip_list[i].ip + ":" + config.port +  '/taskcall',
+	                	body: data,
+	                	headers: {'Content-Type': 'text/html'}
+	            	},
+	            	function(error, response, body){
+			    		if (error){
+			    			index += 1
+			    		}else{
+			    			index += 1
+			    			if (response.statusCode == 200) {
+			    				crypt.decryptJSON(body, function(data){
+			    					if(jsonCheck(data, ["traceroute", "ping"])){
+			    						result.push(data)
+			    					}
+			    				})
+				        	}
+			    		}
+
+			    		if (index == globals.ip_list.length){
+			    			getGeoData(result, function(data) {
+			    				callback(result);
+			    			});
+			    		}
+
+		    	})
+			}
+		})
+	});
 }
 
 function getGeoData(inData, callback) {
