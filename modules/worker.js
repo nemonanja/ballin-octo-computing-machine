@@ -21,7 +21,6 @@ exports.ping = function(address, callback){
     });
 }
 
-
 exports.traceroute = function(address, ttl, callback){
 	var results = []
 	session.traceRoute (address, ttl,
@@ -53,31 +52,6 @@ exports.traceroute = function(address, ttl, callback){
 		callback(null, results)
 	})
 
-}
-
-
-function TimeExceededError (source) {
-	this.name = "TimeExceededError";
-	this.message = "Time exceeded (source=" + source + ")";
-	this.source = source;
-}
-
-function getIP (ip, callback) {
-	if((/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).test(ip)) {
-		console.log('valid ip:', ip);
-		callback(ip);
-	} else {
-		console.log('invalid ip:', ip);
-		dns.lookup(ip, function(err,ip) {
-			if(err) {
-				console.log(err);
-				callback(false);
-			} else {
-				console.log(ip);
-				callback(ip);
-			}
-		});
-	}
 }
 
 exports.callnodes = function(ip, callback){
@@ -189,4 +163,26 @@ function jsonCheck(json, checks) {
     return result;
 }
 
+function TimeExceededError (source) {
+	this.name = "TimeExceededError";
+	this.message = "Time exceeded (source=" + source + ")";
+	this.source = source;
+}
 
+function getIP (ip, callback) {
+	if((/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).test(ip)) {
+		console.log('valid ip:', ip);
+		callback(ip);
+	} else {
+		console.log('invalid ip:', ip);
+		dns.lookup(ip, function(err,ip) {
+			if(err) {
+				console.log(err);
+				callback(false);
+			} else {
+				console.log(ip);
+				callback(ip);
+			}
+		});
+	}
+}

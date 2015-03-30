@@ -4,7 +4,8 @@ Globals = {
   	is_master	: false,
   	my_ip		: '',
   	master_ip	: '',
-  	ready		: false
+  	ready		: false,
+  	geo_data	: []
 };
 
 module.exports = Globals;
