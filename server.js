@@ -117,7 +117,7 @@ app.post('/taskcall', textParser, function(req,res){
 						crypt.sendCryptJSON({}, res)
 					}else{
 						pingres = time
-						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres}, res)
+						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres, ip: globals.my_ip}, res)
 		    			console.log("Time: " + time)
 					}
 				})

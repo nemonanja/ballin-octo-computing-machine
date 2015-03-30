@@ -70,7 +70,7 @@ exports.callnodes = function(ip, callback){
 						console.log (target + ": " + error.toString ());
 					}else{
 						var pingres = time
-						result.push({"traceroute" : tracertres, "ping": pingres})
+						result.push({"traceroute" : tracertres, "ping": pingres, ip: globals.my_ip})
 		    			console.log("Time: " + time)
 					}
 
