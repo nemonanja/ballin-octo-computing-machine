@@ -83,11 +83,10 @@ app.post('/ipnotify', function(req, res) {
 	}
 });
 
-//nemo vitun homo jäbä kutsuu tätä :DDD
-app.post('/removekebabnemo', jsonParser, function(req, res){
-	console.log(req.body);
+// Route for web gui
+app.post('/gettraceroute', jsonParser, function(req, res){
+	console.log('gettraceroute');
 	worker.callnodes(req.body.ip, function(result){
-		console.log("SPERMAMAISTERI: " + req.body.ip)
 		res.json(result)
 	})
 })

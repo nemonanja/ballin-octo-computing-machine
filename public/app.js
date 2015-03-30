@@ -9,7 +9,7 @@ $(function() {
     $("#btnTrace").click(function(){
         var ip = document.getElementById("urlip").value;
          $.ajax({
-            url: '/removekebabnemo',
+            url: '/gettraceroute',
             type: 'post',
             dataType: 'json',
             data: {ip:ip},
