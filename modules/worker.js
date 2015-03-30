@@ -32,12 +32,14 @@ exports.traceroute = function(address, ttl, callback){
 				//console.log (target + ": " + error.source + " (ttl=" + ttl + " ms=" + ms +")");
 			} else {
 				//console.log (target + ": " + error.toString () + " (ttl=" + ttl + " ms=" + ms +")");
-				//console.log(error.source + " : " + ms + "ms")
-				results.push({point: error.source, time: ms})
+				console.log("Error: " + error.source + " : " + ms + "ms")
+				if((/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).test(error.source)) {
+					results.push({point: error.source, time: ms})
+				}
 			}
 		} else {
 			//console.log (target + ": " + target + " (ttl=" + ttl + " ms=" + ms +")");
-			//console.log(target + " : " + ms + "ms")
+			console.log(target + " : " + ms + "ms")
 			results.push({point: target, time: ms})
 		}
 	}, 
@@ -88,6 +90,7 @@ exports.callnodes = function(ip, callback){
 				console.log(error.toString())
 			}else{
 				var tracertres = results
+				console.log(tracertres);
 				_this.ping(ip, function (error, time) {
 					if (error){
 						console.log (target + ": " + error.toString ());
