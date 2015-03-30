@@ -30,6 +30,12 @@ $(function() {
 
     $("#btnTrace").click(function(){
         map.removeAllMarkers();
+        
+        for(var i=0; i<nodeData.length; i++) {
+            markerIndex +=1;
+            map.addMarker(markerIndex, [nodeData[i].geodata.latitude, nodeData[i].geodata.longitude]);
+        }
+
         var ip = document.getElementById("urlip").value;
          $.ajax({
             url: '/gettraceroute',
@@ -41,8 +47,9 @@ $(function() {
                 for(var i=0; i<data.length; i++) {
                     for (var x= 0; x<nodeData.length; x++)
                     {
+                        console.log(nodeData[i].ip, data[i].ip);
                         if (nodeData[i].ip == data[i].ip) {
-                            var startCoords = map.latLngToPoint(nodeData[x][data[i].ip].geodata.latitude, nodeData[x][data[i].ip].geodata.longitude);
+                            var startCoords = map.latLngToPoint(nodeData[x].geodata.latitude, nodeData[x].geodata.longitude);
                             var secondCoord = map.latLngToPoint(data[i].traceroute[0].geodata.latitude, data[i].traceroute[0].geodata.longitude);
                             console.log(startCoords);
                             console.log(secondCoord);
@@ -59,7 +66,7 @@ $(function() {
                             markerIndex +=1;
                             map.addMarker(markerIndex, [data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude]);
                             //Check when tracerout ends
-                            if ((data[i].traceroute[j+1].geodata.latitude == 'undefined')){
+                            if (j+1==data[i].traceroute.length) {
                                 break;
                             }
                             var coords1 = map.latLngToPoint(data[i].traceroute[j].geodata.latitude,data[i].traceroute[j].geodata.longitude);

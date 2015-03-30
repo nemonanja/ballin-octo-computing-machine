@@ -130,9 +130,13 @@ function getGeoData(inData, callback) {
 			limit += inData[i+1].traceroute.length;
 		}
 		for(var j = 0; j < inData[i].traceroute.length; j++){
-			getTracert(inData[i].traceroute[j], function(elem) {
+			getTracert(inData[i].traceroute[j], i, function(elem, x) {
 				counter += 1;
-				dataOut.push(elem);
+				if(elem.geodata) {
+					dataOut.push(elem);
+				} else {
+					inData[x].traceroute.splice(inData[x].traceroute.indexOf(elem), 1);
+				}
 				if(counter==limit) {
 					callback(dataOut);
 				}
@@ -141,14 +145,16 @@ function getGeoData(inData, callback) {
 	}
 }
 
-function getTracert(elem, callback) {
+function getTracert(elem, i, callback) {
 	satelize.satelize({ip: elem.point, JSONP: true}, function(err, geoData) {
 		if(err) {
 			console.log(err)
 		} else {
 			var data = JSON.parse(geoData.substring(9,geoData.length-3));
-			elem['geodata'] = data;
-			callback(elem);
+			if(data.latitude) {
+				elem['geodata'] = data;
+			}
+			callback(elem, i);
 		}
 	});
 }
