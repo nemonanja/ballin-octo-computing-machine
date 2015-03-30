@@ -1,12 +1,39 @@
 $(function() {
     markerIndex = 0;
 
+    /*var markerArray = [
+        {name:'Houston', latLng:[29.761993,-95.369568]},
+        {name:'New York', latLng:[40.710833,-74.002533]},
+        {name:'Kansas City', latLng:[39.115145,-94.633484]}
+    ];*/
+
     $('#world-map').vectorMap({
-        markers:[]
+        markers: []
     });
     var map = $('#world-map').vectorMap('get', 'mapObject');
 
-    $("#btnTrace").click(function(){
+    //Get width and height of the map
+    var width = document.getElementById('world-map').offsetWidth;
+    var height = document.getElementById('world-map').offsetHeight;
+    //Set width and height of SVGOverlay to match the map
+    $('#svgMapOverlay').width(width);
+    $('#svgMapOverlay').height(height);
+
+    /*console.log(width);
+    console.log(height);
+    console.log($('#svgMapOverlay').width());
+    console.log($('#svgMapOverlay').height());*/
+
+    var draw = SVG('svgMapOverlay').size($('#svgMapOverlay').width(),$('#svgMapOverlay').height());
+    var coords1 = map.latLngToPoint(markerArray[0].latLng[0],markerArray[0].latLng[1]);
+    var coords2 = map.latLngToPoint(markerArray[1].latLng[0],markerArray[1].latLng[1]);
+    draw
+        .path()
+        .attr({ fill: 'none',stroke: '#c00', 'stroke-width': 2 })
+        .M(coords1.x, coords1.y)
+        .L(coords2.x, coords2.y);
+
+    /*$("#btnTrace").click(function(){
         var ip = document.getElementById("urlip").value;
          $.ajax({
             url: '/removekebabnemo',
@@ -27,12 +54,12 @@ $(function() {
             }
         });
 
-    });
+    });*/
 
 });
 
-/*
-    var nodeArray = [{coords: [60, 60], name: 'test2'},{coords: [0, 0], name: 'test3'},{coords: [30, 30], name: 'test4'},{coords: [15, 15], name: 'test5'}];
+
+    /*var nodeArray = [{coords: [60, 60], name: 'test2'},{coords: [0, 0], name: 'test3'},{coords: [30, 30], name: 'test4'},{coords: [15, 15], name: 'test5'}];
 
     
     for (i=0; i<nodeArray.length; i++){
@@ -40,20 +67,9 @@ $(function() {
         console.log(nodeArray[i]['coords']);
         console.log(markerIndex);
         markerIndex +=1;
-    }
+    }*/
 
 
 
-$(function(){
-    $('#world-map').vectorMap({
-        markers:[{latLng: [41.90, 12.45], name: 'Vatican City'}]
-    });
 
-    var map = $('#world-map').vectorMap('get', 'mapObject');
 
-    map.addMarker("1", [{ latLng: [41.90, 23.45], name: 'Test' }], []);
-    map.addMarker("2", [{ latLng: [41.90, 33.45], name: 'Test' }], []);
-    map.addMarker("3", [{ latLng: [41.90, 27.45], name: 'Test' }], []);
-    map.addMarker("4", [{ latLng: [41.90, 13.45], name: 'Test' }], []);
-
-});*/
