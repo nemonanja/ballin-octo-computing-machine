@@ -80,43 +80,43 @@ exports.callnodes = function(ip, callback){
 		    				callback(result);
 							return;
 		    			});
+					} else {
+						crypt.encryptJSON({"ip": ip}, function(data){
+							for(i = 0; i < globals.ip_list.length; i++){
+						    	request.post(
+						    		{
+					                	url: "http://" + globals.ip_list[i].ip + ":" + config.port +  '/taskcall',
+					                	body: data,
+					                	headers: {'Content-Type': 'text/html'}
+					            	},
+					            	function(error, response, body){
+							    		if (error){
+							    			index += 1
+							    		}else{
+							    			index += 1
+							    			if (response.statusCode == 200) {
+							    				crypt.decryptJSON(body, function(data){
+							    					if(jsonCheck(data, ["traceroute", "ping"])){
+							    						result.push(data)
+							    					}
+							    				})
+								        	}
+							    		}
+
+							    		if (index == globals.ip_list.length){
+							    			getGeoData(result, function(data) {
+												console.log("returning all results")
+							    				callback(result);
+							    			});
+							    		}
+
+						    	});
+							}
+						});
 					}
 				})
 			}
-		})
-
-		crypt.encryptJSON({"ip": ip}, function(data){
-			for(i = 0; i < globals.ip_list.length; i++){
-		    	request.post(
-		    		{
-	                	url: "http://" + globals.ip_list[i].ip + ":" + config.port +  '/taskcall',
-	                	body: data,
-	                	headers: {'Content-Type': 'text/html'}
-	            	},
-	            	function(error, response, body){
-			    		if (error){
-			    			index += 1
-			    		}else{
-			    			index += 1
-			    			if (response.statusCode == 200) {
-			    				crypt.decryptJSON(body, function(data){
-			    					if(jsonCheck(data, ["traceroute", "ping"])){
-			    						result.push(data)
-			    					}
-			    				})
-				        	}
-			    		}
-
-			    		if (index == globals.ip_list.length){
-			    			getGeoData(result, function(data) {
-								console.log("returning all results")
-			    				callback(result);
-			    			});
-			    		}
-
-		    	})
-			}
-		})
+		});
 	});
 }
 
