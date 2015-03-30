@@ -142,7 +142,5 @@ distributed.initialize(function(status) {
 		console.log('Node initialized as', status);
 		console.log(globals);
 	// Could not initialize node, wait 1 minute and try again
-	} else {
-		distributed.initLoop();
 	}
 });
