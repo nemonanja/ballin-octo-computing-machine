@@ -1,5 +1,6 @@
 var netping = require("net-ping")
 var request = require('request').defaults({jar: true});
+var satelize = require('satelize');
 var _this = this;
 
 var options = {
@@ -79,8 +80,10 @@ exports.callnodes = function(ip, callback){
 				}
 
 				if(globals.ip_list.length == 0) {
-					callback(result)
-					return;
+					getGeoData(result, function(data) {
+	    				callback(result);
+						return;
+	    			});
 				}
 			})
 		}
@@ -110,13 +113,51 @@ exports.callnodes = function(ip, callback){
 		    		}
 
 		    		if (index == globals.ip_list.length){
-		    			callback(result)
-		    			return;
+		    			getGeoData(result, function(data) {
+		    				callback(result);
+		    			});
 		    		}
 
 	    	})
 		}
 	})
+}
+
+function getGeoData(inData, callback) {
+	var dataOut = [];
+	var counter = 0;
+	var limit = inData[0].traceroute.length;
+
+	for(var i = 0; i < inData.length; i++){
+		if(i+1<inData.length) {
+			limit += inData[i+1].traceroute.length;
+		}
+
+		for(var j = 0; j < inData[i].traceroute.length; j++){
+			console.log("index:", i);
+			iterateSpurdo(inData[i].traceroute[j], function(elem) {
+				counter += 1;
+				dataOut.push(elem);
+				console.log(counter, limit);
+				if(counter==limit) {
+					callback(dataOut);
+				}
+			});
+		}
+	}
+}
+
+function iterateSpurdo(elem, callback) {
+	satelize.satelize({ip: elem.point, JSONP: true}, function(err, geoData) {
+		console.log('kyrpämaisteri');
+		if(err) {
+			console.log(err)
+		} else {
+			var data = JSON.parse(geoData.substring(9,geoData.length-3));
+			elem['geodata'] = data;
+			callback(elem);
+		}
+	});
 }
 
 function jsonCheck(json, checks) {
