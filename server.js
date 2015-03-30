@@ -93,7 +93,7 @@ app.post('/gettraceroute', jsonParser, function(req, res){
 })
 
 // Route for web gui
-app.post('/getnodes', jsonParser, function(req, res){
+app.get('/getnodes', jsonParser, function(req, res){
 	console.log('getnodes');
 	res.json(globals.geo_data);
 });

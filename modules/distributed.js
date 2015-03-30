@@ -5,6 +5,7 @@ var dns = require('./dns.js');
 
 var request = require('request').defaults({jar: true});
 var moment = require('moment');
+var satelize = require('satelize');
 
 var registerUrl = '';
 
@@ -38,7 +39,7 @@ var initialize = function(callback) {
 					var then = moment(dnsData.lastUpdate).utc('-0700').valueOf()+25200000;
 					var elapsed = now - then;
 					// DNS updated over minute ago but no response,
-					if(elapsed==null || elapsed>60000) { //60000
+					if(elapsed==null || elapsed>6) { //60000
 						console.log('Updated over 1 min ago --> taking master');
 						takeOver(callback);
 					} else {
@@ -136,12 +137,36 @@ var addSlave = function(uuid, ip, callback) {
 		// Notify all slaves
 		notify(globals.ip_list, uuid);
 
+		//Update geodata for new node
+		updateGeoData(ip);
+
 		callback(true);
+
 	// no valid uuid, node not added to list
 	} else {
 		callback(false);
 	}
 };
+
+var updateGeoData = function(ip) {
+	satelize.satelize({ip: ip, JSONP: true}, function(err, geoData) {
+		if(err) {
+			console.log(err)
+		} else {
+			var data = JSON.parse(geoData.substring(9,geoData.length-3));
+			var ip = data.ip;
+			for (var i=0; i<globals.geo_data.length; i++) {
+				if(globals.geo_data[i].ip===ip) {
+					globals.geo_data.splice(i, 1);
+					break;
+				}
+			}
+			globals.geo_data[ip] = {}
+			globals.geo_data[ip].geodata = data;
+			console.log(globals.geo_data);
+		}
+	});
+}
 
 // Notify all old slave nodes about new node
 var notify = function(ipList, uuid) {
@@ -185,6 +210,10 @@ var takeOver = function(callback) {
 						globals.is_master = true;
 						heartbeat.periodicPingCheck(initLoop);
 						console.log('I am the master');
+
+						//Update geodata for master
+						updateGeoData(globals.my_ip);
+
 						if(callback) {
 							callback('master');
 						}
@@ -199,7 +228,7 @@ var takeOver = function(callback) {
 						initLoop();
 					}
 				});
-			}, 15000) // 15000
+			}, 1) // 15000
 		}
 	});
 }
