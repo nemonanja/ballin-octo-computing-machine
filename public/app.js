@@ -1,14 +1,14 @@
 $(function() {
     markerIndex = 0;
 
-    var markerArray = [
+    /*var markerArray = [
         {name:'Houston', latLng:[29.761993,-95.369568]},
         {name:'New York', latLng:[40.710833,-74.002533]},
         {name:'Kansas City', latLng:[39.115145,-94.633484]}
-    ];
+    ];*/
 
     $('#world-map').vectorMap({
-        markers: markerArray
+        markers: []
     });
     var map = $('#world-map').vectorMap('get', 'mapObject');
 
