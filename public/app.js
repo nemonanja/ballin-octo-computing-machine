@@ -44,6 +44,8 @@ $(function() {
                         if (nodeData[i].ip == data[i].ip) {
                             var startCoords = map.latLngToPoint(nodeData[x][data[i].ip].geodata.latitude, nodeData[x][data[i].ip].geodata.longitude);
                             var secondCoord = map.latLngToPoint(data[i].traceroute[0].geodata.latitude, data[i].traceroute[0].geodata.longitude);
+                            console.log(startCoords);
+                            console.log(secondCoord);
                             draw
                                 .path()
                                 .attr({fill: 'none', stroke: '#f213c7', 'stroke-width': 2})
