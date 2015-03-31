@@ -7,7 +7,7 @@ var latencies = {};
 var failed = 0;
 var failback = null;
 var pinged = {};
-var failcount = 0;
+var failcount = 1;
 
 exports.isAlive = function(req, res){
     crypt.decryptJSON(req.body, function(data) {
