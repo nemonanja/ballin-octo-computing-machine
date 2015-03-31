@@ -114,8 +114,8 @@ var periodicPingCheck = function(crawlBack) {
         for(var node in pinged) {
             var time = pinged[node].timestamp;
             var ip = '';
-
-            if(monument.utc().valueOf() - time >= (failcount * 60) + 60) {
+            console.log(monument.utc().valueOf() - time);
+            if(monument.utc().valueOf() - time >= (failcount * 60000) + 2000) {
                 console.log('Remove node from lists');
                 for (var i=0; i<globals.ip_list.length; i++) {
                     if(globals.ip_list[i].uuid===node) {
