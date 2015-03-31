@@ -114,13 +114,32 @@ function jsonCheck(json, checks) {
 var periodicPingCheck = function(crawlBack) {
     schedule.scheduleJob("*/1 * * * *", function() {    
         for(var node in pinged) {
-            console.log(node);
             var time = pinged[node].timestamp;
-            console.log("adasd:", time);
-            if((monument.utc().valueOf() - time >= (failcount * 60) + 60) && (globals.ip_list.length>1)) {
-                pinged = {};
-                this.cancel();
-                crawlBack();
+            var ip = '';
+
+            if(monument.utc().valueOf() - time >= (failcount * 60) + 60) {
+                for (var i=0; i<globals.ip_list.length; i++) {
+                    if(globals.ip_list[i].uuid===node) {
+                        ip = globals.ip_list[i].ip;
+                        globals.ip_list.splice(i, 1);
+                        break;
+                    }
+                }
+
+                for (var i=0; i<globals.geo_data.length; i++) {
+                    if(globals.geo_data[i].ip===ip) {
+                        globals.geo_data.splice(i, 1);
+                        break;
+                    }
+                }
+
+                delete pinged.node;
+
+                if(globals.ip_list.length>1) {
+                    pinged = {};
+                    this.cancel();
+                    crawlBack();
+                }
             }
         }
     });    

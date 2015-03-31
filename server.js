@@ -64,7 +64,7 @@ app.post('/register', textParser, function(req, res) {
 });
 
 // Unregister node
-app.post('/register', textParser, function(req, res) {
+app.post('/unregister', textParser, function(req, res) {
 	console.log('unregister called');
 	if(globals.is_master && req.body){
 		crypt.decryptJSON(req.body, function(data) {
@@ -167,3 +167,30 @@ distributed.initialize(function(status) {
 	// Could not initialize node, wait 1 minute and try again
 	}
 });
+
+//do something when app is closing
+process.on('exit', exitHandler.bind(null,{cleanup:true}));
+
+//catches ctrl+c event
+process.on('SIGINT', exitHandler.bind(null, {exit:true}));
+
+//catches uncaught exceptions
+process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
+
+// Cleanup function
+function exitHandler(options, err) {
+	if(!globals.is_master && globals.ready) {
+		distributed.unregister(function(success) {
+			console.log('Unregistered:', success);
+			console.log('Closing node');
+		    if (options.cleanup) console.log('clean');
+		    if (err) console.log(err.stack);
+		    if (options.exit) process.exit();
+		});
+	} else {
+		console.log('Closing node');
+		if (options.cleanup) console.log('clean');
+	    if (err) console.log(err.stack);
+	    if (options.exit) process.exit();
+	}
+}

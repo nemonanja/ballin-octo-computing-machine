@@ -230,6 +230,26 @@ var notify = function(ipList, uuid) {
 	}
 };
 
+// Unregister node
+var unregister = function(callback) {
+	crypt.encryptJSON({uuid: globals.uuid}, function(data) {
+		request.post(
+		{
+			url: 'http://'+globals.master_ip+':'+config.port+'/unregister',
+			body: data,
+			headers: {'Content-Type': 'text/html'}
+		},
+		function (error, response, body) {
+			if(error) {
+				console.log(error);
+				callback(false);
+			} else {
+				callback(true);
+			}
+		});
+	});
+};
+
 // Try to take domain
 var takeOver = function(callback) {
 	globals.ongoing = false;
@@ -277,3 +297,4 @@ exports.uuid = uuid;
 exports.addSlave = addSlave;
 exports.removeSlave = removeSlave;
 exports.takeOver =takeOver;
+exports.unregister = unregister;
