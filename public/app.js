@@ -1,6 +1,5 @@
 $(function() {
     markerIndex = 0;
-    markerIndex2 = 0;
     var colors =
                 [
                     '#7fffd4',
@@ -16,7 +15,8 @@ $(function() {
     var nodeData = [];
 
     $('#world-map').vectorMap({
-        markers: []
+        markers: [],
+        zoomButtons : false
     });
     var map = $('#world-map').vectorMap('get', 'mapObject');
 
@@ -28,23 +28,31 @@ $(function() {
     $('#svgMapOverlay').height(height);
 
     var draw = SVG('svgMapOverlay').size($('#svgMapOverlay').width(),$('#svgMapOverlay').height());
+    
     $.get("/getnodes", function(data) {
         nodeData = data;
         console.log(data);
         for(var i=0; i<data.length; i++) {
             markerIndex +=1;
-            map.addMarker(markerIndex, [data[i].geodata.latitude, data[i].geodata.longitude]);
+            $('#nodes').append('<li><h3>Node: ' + data[i].ip + '</h3><ul id="node' + i + '"></ul></li>');
+            map.addMarker(markerIndex, {latLng: [data[i].geodata.latitude, data[i].geodata.longitude], style: {r: 6, fill: colors[i]}, name: 'naem'});
         }
-
+        $("#nodebar h3").click(function(){           
+            $("#nodebar ul ul").slideUp();        
+            if(!$(this).next().is(":visible")) {
+              $(this).next().slideDown();
+            }
+        });        
+        console.log(map.markers);
     });
-
 
     $("#btnTrace").click(function(){
         map.removeAllMarkers();
-
+        markerIndex = 0;
         for(var i=0; i<nodeData.length; i++) {
             markerIndex +=1;
-            map.addMarker(markerIndex, [nodeData[i].geodata.latitude, nodeData[i].geodata.longitude]);
+            map.addMarker(markerIndex, {latLng: [nodeData[i].geodata.latitude, nodeData[i].geodata.longitude], style: {r: 6, fill: colors[i]}});
+            $('#node' + i).empty();
         }
 
         var ip = document.getElementById("urlip").value;
@@ -55,6 +63,7 @@ $(function() {
             data: {ip:ip},
             success: function (data) {
                 console.log(data);
+                var noed = 0;
                 for(var i=0; i<data.length; i++) {
                     var color = '';
                     for (var x= 0; x<nodeData.length; x++)
@@ -62,8 +71,9 @@ $(function() {
                         console.log(nodeData[x].ip, data[i].ip);
                         if (nodeData[x].ip == data[i].ip) {
                             color = colors[x];
+                            noed = x;                            
                             var startCoords = map.latLngToPoint(nodeData[x].geodata.latitude, nodeData[x].geodata.longitude);
-                            var secondCoord = map.latLngToPoint(data[i].traceroute[0].geodata.latitude, data[i].traceroute[0].geodata.longitude);
+                            var secondCoord = map.latLngToPoint(data[i].traceroute[0].geodata.latitude, data[i].traceroute[0].geodata.longitude);                            
                             console.log(startCoords);
                             console.log(secondCoord);
                             draw
@@ -78,11 +88,12 @@ $(function() {
                         if(data[i].traceroute[j].geodata.latitude && data[i].traceroute[j].geodata.longitude) {
                             //console.log(data[i].traceroute[j].geodata);
                             markerIndex +=1;
-                            map.addMarker(markerIndex, [data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude]);
+                            map.addMarker(markerIndex, {latLng: [data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude], name: data[i].traceroute[j].point});
                             //Check when tracerout ends
                             if (j+1==data[i].traceroute.length) {
                                 break;
                             }
+                            $('#node' + noed).append('<li><a href="#" class="mover" id="' + markerIndex + '">' + data[i].traceroute[j].point + ' : ' + data[i].traceroute[j].time + '</a></li>');
                             var coords1 = map.latLngToPoint(data[i].traceroute[j].geodata.latitude,data[i].traceroute[j].geodata.longitude);
                             var coords2 = map.latLngToPoint(data[i].traceroute[j+1].geodata.latitude,data[i].traceroute[j+1].geodata.longitude);
                             draw
@@ -93,7 +104,15 @@ $(function() {
 
                         }
                     }
+                    $('#node' + noed).append('<li><h4>Ping: ' + data[i].ping + '</h4></li>');
                 }
+                $('.mover').on('mouseover', function() {
+                    //map.markers[$(this).attr('id')].element.config.label = 'lol';
+                    //map.markers[$(this).attr('id')].element.setHovered(true);
+                    //map.clearSelectedMarkers();                    
+                    //map.setSelectedMarkers([$(this).attr('id')]);                    
+                    console.log(map.markers[$(this).attr('id')].element.config.label);
+                });
             }
         });
 

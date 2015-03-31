@@ -1,3 +1,5 @@
+* {margin: 0; padding: 0;}
+
 html, body{
 	height: 100%;
 	width: 100%;
@@ -5,10 +7,69 @@ html, body{
 	font-family: 'Open Sans', sans-serif;
 }
 
-#world-map{
-	width: 100%;
+#nodebar {
+	width: 20%;
 	height: 100%;
-    position:absolute;
+	float: right;
+	background-color: #004050;
+	color: white;
+	position: relative;
+}
+
+#nodebar h3 {
+	font-size: 12px;
+	line-height: 30px;
+	padding: 0 10px;
+	cursor: pointer;
+	background: #003040; 
+	background: linear-gradient(#003040, #002535);	
+}
+
+#nodebar h3:hover {
+	text-shadow: 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+#nodebar h3 span {
+	font-size: 16px;
+	margin-right: 10px;
+}
+
+#nodebar li {
+	list-style-type: none;
+}
+
+#nodebar h4 {
+	font-size: 9pt;
+	padding-left: 5px;
+}
+
+#nodebar ul ul li a {
+	color: white;
+	text-decoration: none;
+	font-size: 11px;
+	line-height: 27px;
+	display: block;
+	padding: 0 15px;
+	transition: all 0.15s;
+}
+
+#nodebar ul ul li a:hover {
+	background: #003545;
+	border-left: 5px solid #CAE7FA;
+}
+
+#nodebar ul ul {
+	display: none;
+}
+#nodebar li.active ul {
+	display: block;
+}    	
+
+#world-map{
+	width: 80%;
+	height: 100%;
+	float: left;
+    position:relative;
 }
 
 #svgMapOverlay {
