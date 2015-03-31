@@ -63,6 +63,29 @@ app.post('/register', textParser, function(req, res) {
 	}
 });
 
+// Unregister node
+app.post('/register', textParser, function(req, res) {
+	console.log('unregister called');
+	if(globals.is_master && req.body){
+		crypt.decryptJSON(req.body, function(data) {
+			var uuid = data.uuid;
+			distributed.removeSlave(uuid, function(success) {
+				console.log("Node removed:", success);
+				if(success){
+					console.log('return ip_list:', globals.ip_list);
+					crypt.sendCryptJSON({ip_list: globals.ip_list, ip: clientIp}, res);
+				} else {
+					console.log('return false');
+					crypt.sendCryptJSON(false, res);
+				}
+			});
+		});
+	} else {
+		console.log('return false');
+		crypt.sendCryptJSON(false, res);
+	}
+});
+
 // IP list changed
 app.post('/ipnotify', textParser, function(req, res) {
 	console.log('ipnotify called');

@@ -18,6 +18,7 @@ exports.isAlive = function(req, res){
             if(Globals.is_master) {
                 crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().valueOf()}, res);
             }
+            console.log("dddd:", pinged);
         } else {
             console.log(data);
             res.sendStatus(400);
@@ -46,6 +47,11 @@ var stopBeat = function() {
 
 exports.getLatencies = function(req, res) {
     crypt.sendCryptJSON(latencies, res);
+}
+
+exports.removeNode = function(uuid) {
+    delete pinged.uuid;
+    console.log(pinged);
 }
 
 var sendHeartBeatRequest = function(host, uuid, callback) {
@@ -108,8 +114,11 @@ function jsonCheck(json, checks) {
 var periodicPingCheck = function(crawlBack) {
     schedule.scheduleJob("*/1 * * * *", function() {    
         for(var node in pinged) {
-            var time = node.timestamp;
-            if(monument.utc().valueOf() - time >= (failcount * 60) + 60) {
+            console.log(node);
+            var time = pinged[node].timestamp;
+            console.log("adasd:", time);
+            if((monument.utc().valueOf() - time >= (failcount * 60) + 60) && (globals.ip_list.length>1)) {
+                pinged = {};
                 this.cancel();
                 crawlBack();
             }

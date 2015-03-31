@@ -55,6 +55,8 @@ var initialize = function(callback) {
 var initLoop = function() {
 	globals.ready = false;
 	globals.is_master = false;
+	globals.ip_list = [];
+	globals.geo_data = [];
 	console.log('Starting init loop');
 	setTimeout(function () {
 		initialize(function(status) {
@@ -139,6 +141,41 @@ var addSlave = function(uuid, ip, callback) {
 
 		//Update geodata for new node
 		updateGeoData(ip);
+
+		callback(true);
+
+	// no valid uuid, node not added to list
+	} else {
+		callback(false);
+	}
+};
+
+// Procedure to remove slave node
+var removeSlave = function(uuid, callback) {
+	// check if uuid is valid
+	if(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(uuid)) {
+		var newNode = {uuid: uuid, ip: ip};
+		var ip = '';
+		//check if already in list
+		for (var i=0; i<globals.ip_list.length; i++) {
+			if(globals.ip_list[i].uuid===uuid) {
+				ip = globals.ip_list[i].ip;
+				globals.ip_list.splice(i, 1);
+				break;
+			}
+		}
+
+		for (var i=0; i<globals.geo_data.length; i++) {
+			if(globals.geo_data[i].ip===ip) {
+				globals.geo_data.splice(i, 1);
+				break;
+			}
+		}
+
+		// Notify all slaves
+		notify(globals.ip_list, '');
+
+		heartbeat.removeNode(uuid);
 
 		callback(true);
 
@@ -238,4 +275,5 @@ exports.initialize = initialize;
 exports.initLoop = initLoop;
 exports.uuid = uuid;
 exports.addSlave = addSlave;
+exports.removeSlave = removeSlave;
 exports.takeOver =takeOver;
