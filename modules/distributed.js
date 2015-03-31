@@ -15,6 +15,7 @@ var initialize = function(callback) {
 	dns.getDNSinfo(function(dnsData) {
 		if(!dnsData) {
 			callback(false);
+			initLoop();
 		} else {
 			registerUrl = 'http://'+dnsData.dnsIP+':'+config.port+'/register';
 			// Try to connect to master node
@@ -45,6 +46,7 @@ var initialize = function(callback) {
 					} else {
 						console.log('Updated under 1 min ago --> go to init loop');
 						callback(false);
+						initLoop();
 					}
 				}
 			});
@@ -67,7 +69,6 @@ var initLoop = function() {
 			// Could not initialize node, wait 1 minute and try again
 			} else {
 				console.log('Node not initialized, waiting 1 minute and trying again');
-				initLoop();
 			}
 		});
 	}, 60000) // 1 minute
