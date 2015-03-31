@@ -73,7 +73,7 @@ app.post('/unregister', textParser, function(req, res) {
 				console.log("Node removed:", success);
 				if(success){
 					console.log('return ip_list:', globals.ip_list);
-					crypt.sendCryptJSON({ip_list: globals.ip_list, ip: clientIp}, res);
+					crypt.sendCryptJSON(true, res);
 				} else {
 					console.log('return false');
 					crypt.sendCryptJSON(false, res);

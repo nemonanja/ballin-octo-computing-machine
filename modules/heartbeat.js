@@ -18,7 +18,6 @@ exports.isAlive = function(req, res){
             if(Globals.is_master) {
                 crypt.sendCryptJSON({pong:Globals.uuid, timestamp:monument.utc().valueOf()}, res);
             }
-            console.log("dddd:", pinged);
         } else {
             console.log(data);
             res.sendStatus(400);
@@ -51,7 +50,6 @@ exports.getLatencies = function(req, res) {
 
 exports.removeNode = function(uuid) {
     delete pinged.uuid;
-    console.log(pinged);
 }
 
 var sendHeartBeatRequest = function(host, uuid, callback) {
