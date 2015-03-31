@@ -72,10 +72,8 @@ app.post('/unregister', textParser, function(req, res) {
 			distributed.removeSlave(uuid, function(success) {
 				console.log("Node removed:", success);
 				if(success){
-					console.log('return ip_list:', globals.ip_list);
 					crypt.sendCryptJSON(true, res);
 				} else {
-					console.log('return false');
 					crypt.sendCryptJSON(false, res);
 				}
 			});
