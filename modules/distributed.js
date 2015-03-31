@@ -19,7 +19,7 @@ var initialize = function(callback) {
 			registerUrl = 'http://'+dnsData.dnsIP+':'+config.port+'/register';
 			// Try to connect to master node
 			callMaster(function(response) {
-			// Master found, return response
+				// Master found, return response
 				if(response){
 					globals.ready = true;
 					console.log('Master node found');
@@ -39,7 +39,7 @@ var initialize = function(callback) {
 					var then = moment(dnsData.lastUpdate).utc('-0700').valueOf()+25200000;
 					var elapsed = now - then;
 					// DNS updated over minute ago but no response,
-					if(elapsed==null || elapsed>6) { //60000
+					if(elapsed==null || elapsed>60000) { //60000
 						console.log('Updated over 1 min ago --> taking master');
 						takeOver(callback);
 					} else {
@@ -286,7 +286,7 @@ var takeOver = function(callback) {
 						initLoop();
 					}
 				});
-			}, 1) // 15000
+			}, 15000) // 15000
 		}
 	});
 }

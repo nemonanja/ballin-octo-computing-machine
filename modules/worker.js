@@ -73,7 +73,7 @@ exports.callnodes = function(ip, callback){
 						result.push({"traceroute" : tracertres, "ping": pingres, ip: globals.my_ip})
 		    			console.log("Time: " + time)
 					}
-
+					console.log("asd", globals.ip_list);
 					if(globals.ip_list.length == 0) {
 						getGeoData(result, function(data) {
 							console.log("returning one result")
