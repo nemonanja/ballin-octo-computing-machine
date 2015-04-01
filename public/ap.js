@@ -22,6 +22,17 @@ var removeHops = function () {
     }
 }
 
+var loading = function() {
+    var over = '<div id="overlay"></div>';
+    $(over).appendTo('body');
+    $('#loadAnimation').show();
+}
+
+var loadDone = function() {
+    $('#overlay').remove();
+    $('#loadAnimation').hide();
+}
+
 var doSearch = function(){
     console.log('asd');
     var ip = document.getElementById("searchInput").value;
@@ -30,13 +41,14 @@ var doSearch = function(){
     }
     removeHops();
     $('.nodeClass').empty();
-
+    loading()
      $.ajax({
         url: '/gettraceroute',
         type: 'post',
         dataType: 'json',
         data: {ip:ip},
         success: function (data) {
+            loadDone();
             console.log(data);
             var noed = 0;
             tracePaths=[];
@@ -67,7 +79,7 @@ var doSearch = function(){
 
                         pathCords.push(new google.maps.LatLng(data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude));
 
-                        $('#node' + noed).append('<li><a href="#" class="mover" id="' + data[i].traceroute[j].point + '">' + data[i].traceroute[j].point + ' : ' + data[i].traceroute[j].time + '</a></li>');
+                        $('#node' + noed).append('<li style="color:'+colors[x]+'"><a href="#" style="color:'+colors[x]+'" class="mover" id="' + data[i].traceroute[j].point + '">' + data[i].traceroute[j].point + ' : ' + data[i].traceroute[j].time + '</a></li>');
                         // draw path
                     }
                 }
@@ -81,7 +93,7 @@ var doSearch = function(){
 
                 tracePaths[i].setMap(map);
 
-                $('#node' + noed).append('<li><h4>Ping: ' + data[i].ping + '</h4></li>');
+                $('#node' + noed).append('<li><span><b>Ping: ' + data[i].ping + '</b></span></li>');
             }
             $('.mover').on('mouseover', function() {
                 console.log('hover');
@@ -115,7 +127,7 @@ $(function() {
         console.log(data);
         for(var i=0; i<data.length; i++) {
             //map.addMarker(markerIndex, {latLng: [data[i].geodata.latitude, data[i].geodata.longitude], style: {r: 6, fill: colors[i]}, name: 'naem'});
-            $('#nodes').append('<li><h3>Node: ' + data[i].ip + '</h3><ul id="node' + i + '" class="nodeClass"></ul></li>');
+            $('#nodes').append('<li style="color:'+colors[i]+'"><h3>Node: ' + data[i].ip + '</h3><ul id="node' + i + '" class="nodeClass"></ul></li>');
             nodeList.push(new CustomMarker(
                                 new google.maps.LatLng(data[i].geodata.latitude, data[i].geodata.longitude),
                                 map,

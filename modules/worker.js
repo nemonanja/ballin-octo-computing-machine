@@ -31,25 +31,23 @@ exports.traceroute = function(address, ttl, callback){
 				//console.log (target + ": " + error.source + " (ttl=" + ttl + " ms=" + ms +")");
 			} else {
 				//console.log (target + ": " + error.toString () + " (ttl=" + ttl + " ms=" + ms +")");
-				console.log("Error: " + error.source + " : " + ms + "ms")
+				console.log("IP: " + error.source + " : " + ms + "ms")
 				if((/^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g).test(error.source)) {
 					results.push({point: error.source, time: ms})
 				}
 			}
 		} else {
 			//console.log (target + ": " + target + " (ttl=" + ttl + " ms=" + ms +")");
-			console.log(target + " : " + ms + "ms")
+			console.log("NO ERROR!!:"target + " : " + ms + "ms")
 			results.push({point: target, time: ms})
 		}
 	}, 
 
 	function (error, target) {
 		if (error)
-			//console.log (target + ": " + error.toString ());
 			callback(error, null)
 		else
-			//console.log (target + ": Done");
-		callback(null, results)
+			callback(null, results)
 	})
 
 }
