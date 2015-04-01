@@ -1,0 +1,69 @@
+/* CSS SET UP */
+
+body{
+  background: #343d46;
+}
+.box{
+  margin: 40px auto 0 auto;
+  width: 430px;
+  height: 50px;
+}
+
+/* Search 4 - appear looking glass */
+.container-4{
+	overflow: hidden;
+	width: 430px;
+  vertical-align: middle;
+  white-space: nowrap;
+  /* position: relative; */
+}
+.container-4 input#searchInput{
+  width: 400px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.76);
+  border: none;
+  font-size: 20px;
+  float: left;
+	color: #505050;
+  padding: 0 15px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  outline: 0;
+  text-align: center;
+  
+  -webkit-transition: all .55s ease;
+  -moz-transition: all .55s ease;
+  -ms-transition: all .55s ease;
+  -o-transition: all .55s ease;
+  transition: all .55s ease;
+}
+
+.container-4 input#searchInput::-webkit-input-placeholder {
+   color: #65737e;
+}
+.container-4 input#searchInput:-moz-placeholder { /* Firefox 18- */
+   color: #65737e;  
+}
+.container-4 input#searchInput::-moz-placeholder {  /* Firefox 19+ */
+   color: #65737e;  
+}
+.container-4 input#searchInput:-ms-input-placeholder {  
+   color: #65737e;  
+}
+
+::-webkit-input-placeholder {
+   text-align: center;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   text-align: center;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   text-align: center;  
+}
+
+:-ms-input-placeholder {  
+   text-align: center; 
+}
