@@ -130,7 +130,6 @@ app.post('/taskcall', textParser, function(req,res){
 		worker.traceroute(data.ip, 64, function(error, results){
 			if (error){
 				results.push({point: data.ip, time: -1});
-				crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres, ip: globals.my_ip}, res)
 				console.log(error.toString())
 			}
 			tracertres = results
