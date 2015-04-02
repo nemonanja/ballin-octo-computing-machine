@@ -12,6 +12,7 @@ colors =
                 '#FFFF00',
                 '#C01080'
             ];
+block = false;
 
 var removeHops = function () {
     for (var x = 0; x<tracePaths.length; x++) {
@@ -34,6 +35,9 @@ var loadDone = function() {
 }
 
 var doSearch = function(){
+    if(block)
+        return
+    block=true;
     console.log('asd');
     var ip = document.getElementById("searchInput").value;
     if(ip.length<0) {
@@ -48,6 +52,7 @@ var doSearch = function(){
         dataType: 'json',
         data: {ip:ip},
         success: function (data) {
+            block=false;
             loadDone();
             console.log(data);
             var noed = 0;
@@ -78,10 +83,8 @@ var doSearch = function(){
                         ));
 
                         pathCords.push(new google.maps.LatLng(data[i].traceroute[j].geodata.latitude, data[i].traceroute[j].geodata.longitude));
-
-                        $('#node' + noed).append('<li style="color:'+colors[x]+'"><a href="#" style="color:'+colors[x]+'" class="mover" id="' + data[i].traceroute[j].point + '">' + data[i].traceroute[j].point + ' : ' + data[i].traceroute[j].time + '</a></li>');
-                        // draw path
                     }
+                    $('#node' + noed).append('<li style="color:'+colors[x]+'"><a href="#" style="color:'+colors[x]+'" class="mover" id="' + data[i].traceroute[j].point + '">' + data[i].traceroute[j].point + ' : ' + data[i].traceroute[j].time + '</a></li>');
                 }
                 tracePaths.push(new google.maps.Polyline({
                     path: pathCords,
