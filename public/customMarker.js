@@ -1,4 +1,4 @@
- function CustomMarker(latlng, map, type, color ) {
+ function CustomMarker(latlng, map, type, color) {
    this.latlng_ = latlng;
    this.type_ = type;
    this.color_ = color;
