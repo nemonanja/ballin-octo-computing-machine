@@ -136,7 +136,6 @@ app.post('/taskcall', textParser, function(req,res){
 			tracertres = results
 			worker.ping(data.ip, function (error, time) {
 				if (error){
-					console.log (target + ": " + error.toString ());
 					time = -1
 				}
 				pingres = time
