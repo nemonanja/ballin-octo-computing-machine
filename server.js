@@ -129,21 +129,20 @@ app.post('/taskcall', textParser, function(req,res){
 	crypt.decryptJSON(req.body, function(data){
 		worker.traceroute(data.ip, 64, function(error, results){
 			if (error){
-				res.json({}, res)
+				results.push({point: ip, time: -1});
+				crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres, ip: globals.my_ip}, res)
 				console.log(error.toString())
-			}else{
-				tracertres = results
-				worker.ping(data.ip, function (error, time) {
-					if (error){
-						console.log (target + ": " + error.toString ());
-						crypt.sendCryptJSON({}, res)
-					}else{
-						pingres = time
-						crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres, ip: globals.my_ip}, res)
-		    			console.log("Time: " + time)
-					}
-				})
 			}
+			tracertres = results
+			worker.ping(data.ip, function (error, time) {
+				if (error){
+					console.log (target + ": " + error.toString ());
+					time = -1
+				}
+				pingres = time
+				crypt.sendCryptJSON({"traceroute" : tracertres, "ping": pingres, ip: globals.my_ip}, res)
+    			console.log("Time: " + time)
+			})
 		})
 	})
 });
